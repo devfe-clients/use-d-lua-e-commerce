@@ -31,7 +31,7 @@ export function getFirebaseApp(): FirebaseApp | null {
   if (!app) {
     app = getApps().length
       ? getApp()
-      : initializeApp(firebaseConfig as Required<typeof firebaseConfig>);
+      : initializeApp(firebaseConfig);
   }
   return app;
 }
