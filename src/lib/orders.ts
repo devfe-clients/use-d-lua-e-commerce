@@ -30,7 +30,7 @@ export async function decrementStock(items: CartItem[]): Promise<void> {
       const ref = doc(db, COLLECTIONS.products, item.productId);
       const snap = await tx.get(ref);
       if (!snap.exists()) continue;
-      const current = (snap.data().stock as number) ?? 0;
+      const current = (snap.data()["stock"] as number) ?? 0;
       tx.update(ref, { stock: Math.max(0, current - item.quantity) });
     }
   });
