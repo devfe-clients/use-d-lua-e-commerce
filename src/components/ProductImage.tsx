@@ -10,9 +10,9 @@ export function ProductImage({
   className,
   label = "Foto do produto",
 }: {
-  src?: string;
+  src?: string | undefined;
   alt: string;
-  className?: string;
+  className?: string | undefined;
   label?: string;
 }) {
   if (!src) {
