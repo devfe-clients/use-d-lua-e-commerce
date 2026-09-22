@@ -9,13 +9,15 @@ import { getStorage, type FirebaseStorage } from "firebase/storage";
  * Enquanto as chaves não forem preenchidas, a loja funciona com o catálogo
  * local de demonstração (src/lib/sample-data.ts).
  */
+const env = import.meta.env as Record<string, string | undefined>;
+
 export const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string | undefined,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET as string | undefined,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID as string | undefined,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID as string | undefined,
+  apiKey: env["VITE_FIREBASE_API_KEY"] ?? "",
+  authDomain: env["VITE_FIREBASE_AUTH_DOMAIN"] ?? "",
+  projectId: env["VITE_FIREBASE_PROJECT_ID"] ?? "",
+  storageBucket: env["VITE_FIREBASE_STORAGE_BUCKET"] ?? "",
+  messagingSenderId: env["VITE_FIREBASE_MESSAGING_SENDER_ID"] ?? "",
+  appId: env["VITE_FIREBASE_APP_ID"] ?? "",
 };
 
 export function isFirebaseConfigured() {
