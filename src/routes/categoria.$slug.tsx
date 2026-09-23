@@ -16,8 +16,9 @@ export const Route = createFileRoute("/categoria/$slug")({
       ],
     };
   },
-  beforeLoad: ({ params }) => {
+  loader: ({ params }) => {
     if (!CATEGORIES.some((c) => c.slug === params.slug)) throw notFound();
+    return null;
   },
   component: CategoryPage,
 });
