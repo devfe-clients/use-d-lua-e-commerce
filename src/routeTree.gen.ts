@@ -12,11 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuscaRouteImport } from './routes/busca'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as RastreamentoRouteImport } from './routes/rastreamento'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as ContaPedidosRouteImport } from './routes/conta_.pedidos'
+import { Route as PedidoConfirmacaoRouteImport } from './routes/pedido.confirmacao'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -34,6 +38,11 @@ const CarrinhoRoute = CarrinhoRouteImport.update({
   path: '/carrinho',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContaRoute = ContaRouteImport.update({
   id: '/conta',
   path: '/conta',
@@ -42,6 +51,11 @@ const ContaRoute = ContaRouteImport.update({
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RastreamentoRoute = RastreamentoRouteImport.update({
+  id: '/rastreamento',
+  path: '/rastreamento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SobreRoute = SobreRouteImport.update({
@@ -59,6 +73,16 @@ const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContaPedidosRoute = ContaPedidosRouteImport.update({
+  id: '/conta_/pedidos',
+  path: '/conta/pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoConfirmacaoRoute = PedidoConfirmacaoRouteImport.update({
+  id: '/pedido/confirmacao',
+  path: '/pedido/confirmacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutoIdRoute = ProdutoIdRouteImport.update({
   id: '/produto/$id',
   path: '/produto/$id',
@@ -69,22 +93,30 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/busca': typeof BuscaRoute
   '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/rastreamento': typeof RastreamentoRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/conta/pedidos': typeof ContaPedidosRoute
+  '/pedido/confirmacao': typeof PedidoConfirmacaoRoute
   '/produto/$id': typeof ProdutoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/busca': typeof BuscaRoute
   '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/rastreamento': typeof RastreamentoRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/conta/pedidos': typeof ContaPedidosRoute
+  '/pedido/confirmacao': typeof PedidoConfirmacaoRoute
   '/produto/$id': typeof ProdutoIdRoute
 }
 export interface FileRoutesById {
@@ -92,11 +124,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/busca': typeof BuscaRoute
   '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/rastreamento': typeof RastreamentoRoute
   '/sobre': typeof SobreRoute
   '/termos': typeof TermosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/conta_/pedidos': typeof ContaPedidosRoute
+  '/pedido/confirmacao': typeof PedidoConfirmacaoRoute
   '/produto/$id': typeof ProdutoIdRoute
 }
 export interface FileRouteTypes {
@@ -105,33 +141,45 @@ export interface FileRouteTypes {
     | '/'
     | '/busca'
     | '/carrinho'
+    | '/checkout'
     | '/conta'
     | '/privacidade'
+    | '/rastreamento'
     | '/sobre'
     | '/termos'
     | '/categoria/$slug'
+    | '/conta/pedidos'
+    | '/pedido/confirmacao'
     | '/produto/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/busca'
     | '/carrinho'
+    | '/checkout'
     | '/conta'
     | '/privacidade'
+    | '/rastreamento'
     | '/sobre'
     | '/termos'
     | '/categoria/$slug'
+    | '/conta/pedidos'
+    | '/pedido/confirmacao'
     | '/produto/$id'
   id:
     | '__root__'
     | '/'
     | '/busca'
     | '/carrinho'
+    | '/checkout'
     | '/conta'
     | '/privacidade'
+    | '/rastreamento'
     | '/sobre'
     | '/termos'
     | '/categoria/$slug'
+    | '/conta_/pedidos'
+    | '/pedido/confirmacao'
     | '/produto/$id'
   fileRoutesById: FileRoutesById
 }
@@ -139,11 +187,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuscaRoute: typeof BuscaRoute
   CarrinhoRoute: typeof CarrinhoRoute
+  CheckoutRoute: typeof CheckoutRoute
   ContaRoute: typeof ContaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  RastreamentoRoute: typeof RastreamentoRoute
   SobreRoute: typeof SobreRoute
   TermosRoute: typeof TermosRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
+  ContaPedidosRoute: typeof ContaPedidosRoute
+  PedidoConfirmacaoRoute: typeof PedidoConfirmacaoRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
 }
 
@@ -170,6 +222,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CarrinhoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conta': {
       id: '/conta'
       path: '/conta'
@@ -182,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rastreamento': {
+      id: '/rastreamento'
+      path: '/rastreamento'
+      fullPath: '/rastreamento'
+      preLoaderRoute: typeof RastreamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sobre': {
@@ -205,6 +271,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conta_/pedidos': {
+      id: '/conta_/pedidos'
+      path: '/conta/pedidos'
+      fullPath: '/conta/pedidos'
+      preLoaderRoute: typeof ContaPedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido/confirmacao': {
+      id: '/pedido/confirmacao'
+      path: '/pedido/confirmacao'
+      fullPath: '/pedido/confirmacao'
+      preLoaderRoute: typeof PedidoConfirmacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produto/$id': {
       id: '/produto/$id'
       path: '/produto/$id'
@@ -219,11 +299,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuscaRoute: BuscaRoute,
   CarrinhoRoute: CarrinhoRoute,
+  CheckoutRoute: CheckoutRoute,
   ContaRoute: ContaRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  RastreamentoRoute: RastreamentoRoute,
   SobreRoute: SobreRoute,
   TermosRoute: TermosRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
+  ContaPedidosRoute: ContaPedidosRoute,
+  PedidoConfirmacaoRoute: PedidoConfirmacaoRoute,
   ProdutoIdRoute: ProdutoIdRoute,
 }
 export const routeTree = rootRouteImport
