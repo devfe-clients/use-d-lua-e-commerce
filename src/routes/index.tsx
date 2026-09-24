@@ -37,7 +37,8 @@ function Home() {
       {/* Banner principal — substitua pela sua imagem */}
       <section className="relative">
         <div className="relative h-[70vh] min-h-[420px] w-full">
-          <ProductImage src={undefined} alt="Banner Use D'lua" label="Banner principal" />
+          {/* Troque src={undefined} pela URL da sua imagem de banner */}
+          <ProductImage src={undefined} alt="Banner Use D'lua" label="" />
           <div className="absolute inset-0 flex items-center justify-center bg-ink/10 px-6">
             <div className="max-w-xl text-center">
               <p className="eyebrow">Nova estação</p>
