@@ -165,12 +165,9 @@ function CartPage() {
             </div>
           </dl>
 
-          <button
-            className="btn-gold mt-6 w-full"
-            onClick={() => toast("Checkout em breve", { description: "O fluxo de pagamento será configurado na próxima etapa." })}
-          >
+          <Link to="/checkout" className="btn-gold mt-6 w-full">
             Finalizar compra
-          </button>
+          </Link>
           <p className="mt-3 text-center text-xs text-muted-foreground">
             Frete e pagamento na próxima etapa.
           </p>
