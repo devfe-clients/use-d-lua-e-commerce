@@ -54,16 +54,51 @@ export type Coupon = {
   minSubtotal?: number;
 };
 
+export type OrderStatus = "pending" | "separacao" | "enviado" | "entregue" | "cancelado";
+
+export type PaymentMethod = "cartao" | "pix" | "boleto";
+
+export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
+  cartao: "Cartão de crédito",
+  pix: "Pix",
+  boleto: "Boleto bancário",
+};
+
+export const STATUS_LABELS: Record<OrderStatus, string> = {
+  pending: "Pedido recebido",
+  separacao: "Em separação",
+  enviado: "Enviado",
+  entregue: "Entregue",
+  cancelado: "Cancelado",
+};
+
+export type ShippingAddress = {
+  nome: string;
+  email: string;
+  telefone: string;
+  cep: string;
+  rua: string;
+  numero: string;
+  complemento?: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+};
+
 export type Order = {
-  id?: string;
-  userId?: string | null;
-  items: CartItem[];
+  id: string;
+  usuarioId: string | null;
+  itens: CartItem[];
   subtotal: number;
-  discount: number;
+  desconto: number;
   total: number;
-  couponCode?: string | null;
-  status: "pending" | "paid" | "shipped" | "cancelled";
-  createdAt: string;
+  cupom?: string | null;
+  enderecoEntrega: ShippingAddress;
+  formaPagamento: PaymentMethod;
+  status: OrderStatus;
+  criadoEm: string;
+  /** Datas ISO de cada etapa (preenchidas no Firestore conforme o pedido avança). */
+  historico?: Partial<Record<Exclude<OrderStatus, "cancelado">, string>>;
 };
 
 export function formatPrice(value: number) {

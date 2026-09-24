@@ -1,24 +1,66 @@
-import { addDoc, collection, doc, getDocs, query, runTransaction, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, runTransaction, setDoc, where } from "firebase/firestore";
 import { COLLECTIONS, getDb } from "./firebase";
 import type { CartItem, Order } from "./types";
 
 /**
- * Pedidos e estoque.
- * Estrutura pronta para o Firebase — ao configurar as chaves, estas funções
- * passam a gravar no Firestore automaticamente.
+ * Pedidos e estoque. Com o Firebase configurado grava/lê do Firestore
+ * (coleção "orders", id do documento = número do pedido). Sem as chaves,
+ * usa o localStorage para que o fluxo possa ser testado.
  */
+const LOCAL_KEY = "usedlua.orders.v1";
+
+function readLocal(): Order[] {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_KEY) ?? "[]") as Order[];
+  } catch {
+    return [];
+  }
+}
+
+export function generateOrderNumber() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let rand = "";
+  for (let i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
+  return `${Date.now()}${rand}`;
+}
+
 export async function createOrder(
-  order: Omit<Order, "id" | "createdAt" | "status"> & { status?: Order["status"] },
+  data: Omit<Order, "id" | "criadoEm" | "status" | "historico">,
 ): Promise<Order> {
-  const payload: Order = {
-    ...order,
-    status: order.status ?? "pending",
-    createdAt: new Date().toISOString(),
+  const now = new Date().toISOString();
+  const order: Order = {
+    ...data,
+    id: generateOrderNumber(),
+    status: "pending",
+    criadoEm: now,
+    historico: { pending: now },
   };
   const db = getDb();
-  if (!db) return { ...payload, id: `local-${Date.now()}` };
-  const ref = await addDoc(collection(db, COLLECTIONS.orders), payload);
-  return { ...payload, id: ref.id };
+  if (db) {
+    await setDoc(doc(db, COLLECTIONS.orders, order.id), order);
+  } else {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify([order, ...readLocal()]));
+  }
+  return order;
+}
+
+export async function fetchOrder(id: string): Promise<Order | null> {
+  const clean = id.trim().toUpperCase();
+  if (!clean) return null;
+  const db = getDb();
+  if (!db) return readLocal().find((o) => o.id === clean) ?? null;
+  const snap = await getDoc(doc(db, COLLECTIONS.orders, clean));
+  return snap.exists() ? ({ ...(snap.data() as Order), id: snap.id }) : null;
+}
+
+export async function fetchOrdersByUser(usuarioId: string): Promise<Order[]> {
+  const db = getDb();
+  const list = db
+    ? (await getDocs(query(collection(db, COLLECTIONS.orders), where("usuarioId", "==", usuarioId)))).docs.map(
+        (d) => ({ ...(d.data() as Order), id: d.id }),
+      )
+    : readLocal().filter((o) => o.usuarioId === usuarioId);
+  return list.sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
 }
 
 /** Baixa de estoque transacional (executada no fechamento do pedido). */
@@ -26,21 +68,17 @@ export async function decrementStock(items: CartItem[]): Promise<void> {
   const db = getDb();
   if (!db) return;
   await runTransaction(db, async (tx) => {
-    for (const item of items) {
-      const ref = doc(db, COLLECTIONS.products, item.productId);
-      const snap = await tx.get(ref);
-      if (!snap.exists()) continue;
+    const refs = items.map((i) => doc(db, COLLECTIONS.products, i.productId));
+    const snaps = await Promise.all(refs.map((r) => tx.get(r)));
+    snaps.forEach((snap, idx) => {
+      if (!snap.exists()) return;
       const current = (snap.data()["stock"] as number) ?? 0;
-      tx.update(ref, { stock: Math.max(0, current - item.quantity) });
-    }
+      tx.update(refs[idx]!, { stock: Math.max(0, current - items[idx]!.quantity) });
+    });
   });
 }
 
-export async function fetchOrdersByUser(userId: string): Promise<Order[]> {
-  const db = getDb();
-  if (!db) return [];
-  const snap = await getDocs(
-    query(collection(db, COLLECTIONS.orders), where("userId", "==", userId)),
-  );
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Order, "id">) }));
+export function formatDateTime(iso?: string) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
