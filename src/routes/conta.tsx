@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 
@@ -52,9 +52,12 @@ function AccountPage() {
         <p className="mt-3 text-sm text-muted-foreground">
           Seus pedidos aparecerão aqui assim que o checkout estiver ativo.
         </p>
-        <button onClick={() => void logout()} className="btn-outline-ink mt-8">
-          Sair
-        </button>
+        <div className="mt-8 flex justify-center gap-3">
+          <Link to="/conta/pedidos" className="btn-gold">Meus pedidos</Link>
+          <button onClick={() => void logout()} className="btn-outline-ink">
+            Sair
+          </button>
+        </div>
       </div>
     );
   }

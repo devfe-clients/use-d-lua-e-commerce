@@ -6,7 +6,7 @@ import { fetchOrder, fetchOrdersByUser, formatDateTime } from "@/lib/orders";
 import { formatPrice, STATUS_LABELS, type Order, type OrderStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/rastreamento")({
-  validateSearch: (s: Record<string, unknown>) => ({ pedido: typeof s.pedido === "string" ? s.pedido : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ pedido: typeof s["pedido"] === "string" ? s["pedido"] : undefined }),
   head: () => ({
     meta: [
       { title: "Rastrear pedido — Use D'lua" },
