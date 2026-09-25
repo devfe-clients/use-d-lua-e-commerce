@@ -6,7 +6,7 @@ import { OrderSummary } from "@/components/OrderSummary";
 import { PAYMENT_LABELS, STATUS_LABELS, type Order } from "@/lib/types";
 
 export const Route = createFileRoute("/pedido/confirmacao")({
-  validateSearch: (s: Record<string, unknown>) => ({ pedido: typeof s.pedido === "string" ? s.pedido : "" }),
+  validateSearch: (s: Record<string, unknown>) => ({ pedido: typeof s["pedido"] === "string" ? s["pedido"] : "" }),
   head: () => ({
     meta: [
       { title: "Pedido confirmado — Use D'lua" },
