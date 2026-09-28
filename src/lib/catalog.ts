@@ -63,8 +63,7 @@ export function applyFilters(products: Product[], filters: CatalogFilters): Prod
       return false;
     if (term && !`${p.name} ${p.description}`.toLowerCase().includes(term)) return false;
     if (filters.sizes?.length && !p.sizes.some((s) => filters.sizes!.includes(s))) return false;
-    if (filters.colors?.length && !p.colors.some((c) => filters.colors!.includes(c)))
-      return false;
+    if (filters.colors?.length && !p.colors.some((c) => filters.colors!.includes(c))) return false;
     return true;
   });
 

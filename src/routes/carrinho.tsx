@@ -55,10 +55,7 @@ function CartPage() {
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
         <ul className="divide-y divide-border border-y border-border">
           {items.map((item) => (
-            <li
-              key={`${item.productId}-${item.size}-${item.color}`}
-              className="flex gap-4 py-6"
-            >
+            <li key={`${item.productId}-${item.size}-${item.color}`} className="flex gap-4 py-6">
               <Link
                 to="/produto/$id"
                 params={{ id: item.slug }}
@@ -165,7 +162,14 @@ function CartPage() {
             </div>
           </dl>
 
-          <Link to="/checkout" className="btn-gold mt-6 w-full">
+          <button
+            className="btn-gold mt-6 w-full"
+            onClick={() =>
+              toast("Checkout em breve", {
+                description: "O fluxo de pagamento será configurado na próxima etapa.",
+              })
+            }
+          >
             Finalizar compra
           </Link>
           <p className="mt-3 text-center text-xs text-muted-foreground">

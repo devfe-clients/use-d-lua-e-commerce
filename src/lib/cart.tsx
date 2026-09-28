@@ -84,10 +84,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCoupon(null);
   }, []);
 
-  const subtotal = useMemo(
-    () => items.reduce((sum, i) => sum + i.price * i.quantity, 0),
-    [items],
-  );
+  const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price * i.quantity, 0), [items]);
 
   const discount = useMemo(() => {
     if (!coupon) return 0;

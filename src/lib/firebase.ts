@@ -29,9 +29,7 @@ let app: FirebaseApp | null = null;
 export function getFirebaseApp(): FirebaseApp | null {
   if (!isFirebaseConfigured()) return null;
   if (!app) {
-    app = getApps().length
-      ? getApp()
-      : initializeApp(firebaseConfig);
+    app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   }
   return app;
 }

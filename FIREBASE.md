@@ -28,6 +28,7 @@ Enquanto estiverem vazias, a loja funciona com o catálogo de demonstração
 ## 3. Coleções do Firestore
 
 ### `products`
+
 ```json
 {
   "name": "Blusa de Seda Lua",
@@ -46,20 +47,25 @@ Enquanto estiverem vazias, a loja funciona com o catálogo de demonstração
   "createdAt": "2026-09-10T12:00:00.000Z"
 }
 ```
+
 O aviso "Últimas unidades!" aparece quando `stock` for menor que 5
 (`LOW_STOCK_THRESHOLD` em `src/lib/types.ts`).
 
 ### `coupons` (id do documento = código em MAIÚSCULAS, ex. `DLUA10`)
+
 ```json
 { "code": "DLUA10", "type": "percent | fixed", "value": 10, "minSubtotal": 300 }
 ```
 
 ### `orders`
+
 ```json
 {
   "userId": "uid ou null",
   "items": [{ "productId": "", "name": "", "price": 0, "size": "", "color": "", "quantity": 1 }],
-  "subtotal": 0, "discount": 0, "total": 0,
+  "subtotal": 0,
+  "discount": 0,
+  "total": 0,
   "couponCode": null,
   "status": "pending | paid | shipped | cancelled",
   "createdAt": "ISO date"
@@ -67,6 +73,7 @@ O aviso "Últimas unidades!" aparece quando `stock` for menor que 5
 ```
 
 ### `users` (id do documento = uid do Authentication)
+
 ```json
 { "name": "", "email": "", "createdAt": "ISO date" }
 ```
@@ -91,17 +98,18 @@ service cloud.firestore {
 
 ## 5. Onde está cada coisa no código
 
-| Arquivo | Função |
-| --- | --- |
-| `src/lib/firebase.ts` | Inicialização e nomes das coleções |
-| `src/lib/catalog.ts` | Produtos, filtros, ordenação e cupons |
-| `src/lib/orders.ts` | Criação de pedidos e baixa de estoque |
-| `src/lib/auth.tsx` | Login, cadastro e sessão |
-| `src/lib/cart.tsx` | Carrinho (salvo no navegador) |
+| Arquivo               | Função                                |
+| --------------------- | ------------------------------------- |
+| `src/lib/firebase.ts` | Inicialização e nomes das coleções    |
+| `src/lib/catalog.ts`  | Produtos, filtros, ordenação e cupons |
+| `src/lib/orders.ts`   | Criação de pedidos e baixa de estoque |
+| `src/lib/auth.tsx`    | Login, cadastro e sessão              |
+| `src/lib/cart.tsx`    | Carrinho (salvo no navegador)         |
 
 ## 6. Imagens
 
 Todos os espaços de foto estão vazios de propósito. Para preencher:
+
 - **produtos**: campo `images` de cada documento;
 - **banner e categorias da home**: `src/routes/index.tsx` (trocar `src={undefined}`
   pela URL da imagem).

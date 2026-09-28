@@ -155,8 +155,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    linear-gradient(135deg, var(--color-sand) 0%, var(--color-gold-soft) 100%);
+  background: linear-gradient(135deg, var(--color-sand) 0%, var(--color-gold-soft) 100%);
   color: var(--color-muted-foreground);
   font-size: 0.65rem;
   letter-spacing: 0.2em;

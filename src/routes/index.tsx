@@ -17,7 +17,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Use D'lua — Moda feminina moderna e elegante" },
       {
         property: "og:description",
-        content: "Blusas, calças e corsets femininos com design minimalista e acabamento impecável.",
+        content:
+          "Blusas, calças e corsets femininos com design minimalista e acabamento impecável.",
       },
     ],
   }),

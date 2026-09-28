@@ -65,9 +65,7 @@ function AccountPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-20">
       <p className="eyebrow text-center">Minha conta</p>
-      <h1 className="mt-2 text-center text-3xl">
-        {mode === "login" ? "Entrar" : "Criar conta"}
-      </h1>
+      <h1 className="mt-2 text-center text-3xl">{mode === "login" ? "Entrar" : "Criar conta"}</h1>
 
       {!configured && (
         <p className="mt-6 border border-border bg-secondary p-4 text-xs leading-relaxed text-muted-foreground">

@@ -19,11 +19,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:h-20 lg:px-8">
-        <button
-          className="lg:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Abrir menu"
-        >
+        <button className="lg:hidden" onClick={() => setOpen((v) => !v)} aria-label="Abrir menu">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 

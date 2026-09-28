@@ -16,8 +16,8 @@ export const Route = createFileRoute("/sobre")({
       <div className="mt-8 space-y-5 text-sm leading-relaxed text-muted-foreground">
         <p>
           A Use D&apos;lua nasceu do desejo de criar peças femininas atemporais, com caimento
-          impecável e acabamento cuidadoso. Cada coleção é pensada para valorizar a mulher que
-          veste sua própria essência.
+          impecável e acabamento cuidadoso. Cada coleção é pensada para valorizar a mulher que veste
+          sua própria essência.
         </p>
         <p>
           Trabalhamos com produção em pequena escala e tecidos selecionados, priorizando conforto,
