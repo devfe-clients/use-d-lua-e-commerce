@@ -37,7 +37,7 @@ function Home() {
     <div>
       {/* Banner principal — substitua pela sua imagem */}
       <section className="relative">
-        <div className="relative h-[70vh] min-h-[420px] w-full">
+        <div className="relative h-[70vh] min-h-105 w-full">
           {/* Troque src={undefined} pela URL da sua imagem de banner */}
           <ProductImage src={undefined} alt="Banner Use D'lua" label="" />
           <div className="absolute inset-0 flex items-center justify-center bg-ink/10 px-6">
@@ -50,7 +50,7 @@ function Home() {
                 Peças atemporais em tecidos nobres, pensadas para o dia a dia e para as noites
                 especiais.
               </p>
-              <Link to="/categoria/$slug" params={{ slug: "blusas" }} className="btn-gold mt-8">
+              <Link to="/categoria/$slug" params={{ slug: "blusas" }} className="btn-gold mt-8 rounded-full">
                 Ver coleção
               </Link>
             </div>
@@ -69,7 +69,7 @@ function Home() {
               key={c.slug}
               to="/categoria/$slug"
               params={{ slug: c.slug }}
-              className="group relative aspect-[4/5] overflow-hidden"
+              className="group relative aspect-4/5 overflow-hidden"
             >
               <ProductImage src={undefined} alt={c.name} label={`Foto ${c.name}`} />
               <div className="absolute inset-x-0 bottom-0 bg-background/85 py-4 text-center">
