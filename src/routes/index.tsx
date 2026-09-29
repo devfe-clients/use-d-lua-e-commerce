@@ -44,11 +44,11 @@ function Home() {
             <div className="max-w-xl text-center">
               <p className="eyebrow">Nova estação</p>
               <h1 className="mt-4 text-4xl leading-tight sm:text-5xl lg:text-6xl">
-                Elegância que acompanha o seu ritmo
+                Assim Como a Lua somos feitas de Fases
               </h1>
               <p className="mt-4 text-sm text-muted-foreground">
-                Peças atemporais em tecidos nobres, pensadas para o dia a dia e para as noites
-                especiais.
+                Peças escolhidas com cuidado elegância qualidade e delicadeza
+            
               </p>
               <Link to="/categoria/$slug" params={{ slug: "blusas" }} className="btn-gold mt-8 rounded-full">
                 Ver coleção
