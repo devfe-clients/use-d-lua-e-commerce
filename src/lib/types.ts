@@ -102,7 +102,7 @@ export type Order = {
 };
 
 export function formatPrice(value: number) {
-  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  return (value / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
 export function effectivePrice(product: Product) {
