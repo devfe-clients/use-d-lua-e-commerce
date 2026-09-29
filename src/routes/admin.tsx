@@ -33,7 +33,7 @@ export const Route = (createFileRoute as any)("/admin")({
 function AdminLayout() {
   // useAuth() retorna o usuário atual e as funções de login/logout
   // Definido em src/lib/auth.tsx
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
 
   // Enquanto o Firebase verifica a sessão, mostra um loader simples
   if (loading) {
@@ -47,6 +47,14 @@ function AdminLayout() {
   // Se não há usuário logado, mostra a tela de login
   if (!user) {
     return <LoginScreen />;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="flex h-screen items-center justify-center text-sm text-muted-foreground">
+        Acesso não autorizado.
+      </div>
+    );
   }
 
   // Usuário logado: renderiza o painel
