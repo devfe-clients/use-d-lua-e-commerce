@@ -63,18 +63,19 @@ function AdminPedidos() {
    * e pegamos o item na posição seguinte.
    */
   async function handleAdvanceStatus(order: Order) {
-    const currentIndex = STATUS_FLOW.indexOf(order.status as OrderStatus);
+    if (!order.status) return;
+    const currentIndex = STATUS_FLOW.indexOf(order.status);
     // Se já está no último status ou é "cancelado", não faz nada
     if (currentIndex === -1 || currentIndex >= STATUS_FLOW.length - 1) return;
 
-    const nextStatus = STATUS_FLOW[currentIndex + 1];
+    const nextStatus = STATUS_FLOW[currentIndex + 1] as OrderStatus;
     await adminUpdateOrderStatus(order.id, nextStatus);
 
     // Atualiza o estado local para refletir a mudança sem recarregar tudo
     setOrders((prev) =>
       prev.map((o) =>
         o.id === order.id ? { ...o, status: nextStatus } : o,
-      ),
+      ) as Order[],
     );
   }
 
@@ -146,7 +147,7 @@ function OrderRow({
   onToggle: () => void;
   onAdvance: () => void;
 }) {
-  const currentIndex = STATUS_FLOW.indexOf(order.status as OrderStatus);
+  const currentIndex = order.status ? STATUS_FLOW.indexOf(order.status) : -1;
   // Pedido pode avançar se ainda não chegou no último status e não está cancelado
   const canAdvance =
     currentIndex !== -1 && currentIndex < STATUS_FLOW.length - 1;
@@ -250,7 +251,7 @@ function OrderRow({
               {/* STATUS_FLOW[currentIndex + 1] é o próximo status na sequência */}
               <button onClick={onAdvance} className="btn-gold text-xs">
                 Avançar para:{" "}
-                {STATUS_LABELS[STATUS_FLOW[STATUS_FLOW.indexOf(order.status as OrderStatus) + 1]]}
+                {order.status && STATUS_LABELS[STATUS_FLOW[STATUS_FLOW.indexOf(order.status) + 1] as OrderStatus]}
               </button>
             </div>
           )}
@@ -297,7 +298,7 @@ function FilterButton({
  * Badge colorido por status.
  * Cada status tem uma cor diferente para identificação visual rápida.
  */
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status }: { status: string | undefined }) {
   // Mapa de status → classe de cor de fundo
   const colors: Record<string, string> = {
     pending: "bg-yellow-100 text-yellow-800",
@@ -306,6 +307,8 @@ function StatusBadge({ status }: { status: string }) {
     entregue: "bg-green-100 text-green-800",
     cancelado: "bg-red-100 text-red-800",
   };
+
+  if (!status) return null;
 
   return (
     <span

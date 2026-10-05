@@ -27,18 +27,17 @@ const keyOf = (i: { productId: string; size: string; color: string }) =>
   `${i.productId}|${i.size}|${i.color}`;
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [coupon, setCoupon] = useState<Coupon | null>(null);
-  const [couponError, setCouponError] = useState<string | null>(null);
-
-  useEffect(() => {
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw) as CartItem[]);
+      return raw ? (JSON.parse(raw) as CartItem[]) : [];
     } catch {
-      /* ignora */
+      return [];
     }
-  }, []);
+  });
+  const [coupon, setCoupon] = useState<Coupon | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
