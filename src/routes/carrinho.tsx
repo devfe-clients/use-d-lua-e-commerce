@@ -40,7 +40,7 @@ function CartPage() {
         <p className="mt-3 text-sm text-muted-foreground">
           Explore nossas peças e encontre a sua próxima favorita.
         </p>
-        <Link to="/categoria/$slug" params={{ slug: "blusas" }} className="btn-gold mt-8">
+        <Link to="/busca" search={{ q: "" }} className="btn-gold mt-8">
           Ver catálogo
         </Link>
       </div>

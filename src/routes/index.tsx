@@ -49,13 +49,13 @@ function Home() {
               <p className="mt-4 text-sm text-muted-foreground">
                 Peças escolhidas com cuidado elegância qualidade e delicadeza
               </p>
-              <Link
-                to="/categoria/$slug"
-                params={{ slug: "pijamas" }}
-                className="btn-gold mt-8 rounded-full"
-              >
-                Ver coleção
-              </Link>
+<Link
+  to="/busca"
+  search={{ q: "" }}
+  className="btn-gold mt-8 rounded-full"
+>
+  Ver coleção
+</Link>
             </div>
           </div>
         </div>
