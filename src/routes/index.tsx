@@ -39,7 +39,11 @@ function Home() {
       <section className="relative">
         <div className="relative h-[70vh] min-h-105 w-full">
           {/* Troque src={undefined} pela URL da sua imagem de banner */}
-      <ProductImage src="https://res.cloudinary.com/cmehevck/image/upload/v1791208405/WhatsApp_Image_2026-10-05_at_10.50.55.jpg" alt="Banner Use D'lua" label="" />
+          <ProductImage
+            src="https://res.cloudinary.com/cmehevck/image/upload/v1791208405/WhatsApp_Image_2026-10-05_at_10.50.55.jpg"
+            alt="Banner Use D'lua"
+            label=""
+          />
           <div className="absolute inset-0 flex items-center justify-center bg-ink/10 px-6">
             <div className="max-w-xl text-center">
               <p className="eyebrow">Moda Feminina</p>
@@ -49,13 +53,9 @@ function Home() {
               <p className="mt-4 text-sm text-muted-foreground">
                 Peças escolhidas com cuidado elegância qualidade e delicadeza
               </p>
-<Link
-  to="/busca"
-  search={{ q: "" }}
-  className="btn-gold mt-8 rounded-full"
->
-  Ver coleção
-</Link>
+              <Link to="/busca" search={{ q: "" }} className="btn-gold mt-8 rounded-full">
+                Ver coleção
+              </Link>
             </div>
           </div>
         </div>
