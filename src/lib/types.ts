@@ -1,8 +1,8 @@
-export type CategorySlug = "blusas" | "calcas" | "corset";
+export type CategorySlug = "pijamas" | "calcinhas" | "corset";
 
 export const CATEGORIES: { slug: CategorySlug; name: string }[] = [
-  { slug: "blusas", name: "Blusas" },
-  { slug: "calcas", name: "Calças" },
+  { slug: "pijamas", name: "Pijamas" },
+  { slug: "calcinhas", name: "Calcinhas" },
   { slug: "corset", name: "Corset" },
 ];
 
