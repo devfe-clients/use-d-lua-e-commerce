@@ -18,8 +18,14 @@ export const Route = createFileRoute("/produto/$id")({
   head: ({ params }) => ({
     meta: [
       { title: `Produto ${params.id} — Use D'lua` },
-      { name: "description", content: "Detalhes da peça, tamanhos, cores e disponibilidade." },
-      { property: "og:title", content: `Produto — Use D'lua` },
+      {
+        name: "description",
+        content: "Detalhes da peça, tamanhos, cores e disponibilidade.",
+      },
+      {
+        property: "og:title",
+        content: `Produto — Use D'lua`,
+      },
       {
         property: "og:description",
         content: "Detalhes da peça, tamanhos, cores e disponibilidade.",

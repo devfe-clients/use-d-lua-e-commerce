@@ -9,11 +9,13 @@ export function ProductImage({
   alt,
   className,
   label = "Foto do produto",
+  priority = false,
 }: {
   src?: string | undefined;
   alt: string;
   className?: string | undefined;
   label?: string;
+  priority?: boolean;
 }) {
   if (!src) {
     return (
@@ -27,7 +29,9 @@ export function ProductImage({
       src={src}
       alt={alt}
       className={cn("h-full w-full object-cover", className)}
-      loading="lazy"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
+      decoding={priority ? "sync" : "async"}
     />
   );
 }
