@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { CATEGORIES } from "@/lib/types";
 import { useCart } from "@/lib/cart";
 
@@ -48,7 +48,7 @@ export function Header() {
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               placeholder="Buscar peças"
-              className="w-full border border-border bg-card py-2 pl-9 pr-3 text-sm outline-none transition-colors focus:border-gold"
+              className="w-full rounded-full border border-border bg-card py-2 pl-9 pr-3 text-sm outline-none transition-colors focus:border-gold"
               aria-label="Buscar produtos"
             />
           </div>
@@ -59,7 +59,7 @@ export function Header() {
             <User className="h-5 w-5" />
           </Link>
           <Link to="/carrinho" aria-label="Carrinho" className="relative hover:text-gold">
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingCart className="h-5 w-5" />
             {count > 0 && (
               <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[0.6rem] text-ink">
                 {count}
@@ -76,7 +76,7 @@ export function Header() {
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               placeholder="Buscar peças"
-              className="w-full border border-border bg-card px-3 py-2 text-sm outline-none focus:border-gold"
+              className="w-full rounded-full border border-border bg-card px-4 py-2 text-sm outline-none focus:border-gold"
               aria-label="Buscar produtos"
             />
           </form>
