@@ -37,26 +37,30 @@ function Home() {
     <div>
       {/* Banner principal — substitua pela sua imagem */}
       <section className="relative">
-        <div className="relative h-[70vh] min-h-105 w-full">
-          {/* Troque src={undefined} pela URL da sua imagem de banner */}
+        <div className="relative min-h-[420px] w-full md:min-h-0 md:aspect-[1600/756]">
           <ProductImage
-            src="https://res.cloudinary.com/cmehevck/image/upload/v1791208405/WhatsApp_Image_2026-10-05_at_10.50.55.jpg"
+            src="https://res.cloudinary.com/cmehevck/image/upload/v1791418035/WhatsApp_Image_2026-10-07_at_20.04.16.jpg"
             alt="Banner Use D'lua"
             label=""
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-ink/10 px-6">
-            <div className="max-w-xl text-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/10 px-6 text-center md:block md:px-0">
+            <div className="md:absolute md:left-[29.2%] md:top-[12%] md:w-[48%] md:-translate-x-1/2">
               <p className="eyebrow">Moda Feminina</p>
-              <h1 className="mt-4 text-4xl leading-tight sm:text-5xl lg:text-6xl">
-                Assim Como a Lua somos feitas de Fases
+              <h1 className="mt-4 text-4xl leading-tight md:text-[length:clamp(1.5rem,4.6vw,5rem)]">
+                Assim Como a Lua <br className="hidden md:block" />
+                somos feitas de Fases
               </h1>
-              <p className="mt-4 text-sm text-muted-foreground">
+              <p className="mt-4 text-sm text-ink/80 md:text-[length:clamp(0.875rem,1.25vw,1.25rem)]">
                 Peças escolhidas com cuidado elegância qualidade e delicadeza
               </p>
-              <Link to="/busca" search={{ q: "" }} className="btn-gold mt-8 rounded-full">
-                Ver coleção
-              </Link>
             </div>
+            <Link
+              to="/busca"
+              search={{ q: "" }}
+              className="btn-gold mt-8 rounded-full md:absolute md:left-[26.5%] md:top-[60%] md:mt-0 md:-translate-y-1/2"
+            >
+              Ver coleção
+            </Link>
           </div>
         </div>
       </section>
