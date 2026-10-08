@@ -38,12 +38,20 @@ function Home() {
       {/* Banner principal — substitua pela sua imagem */}
       <section className="relative">
         <div className="relative min-h-[420px] w-full md:min-h-0 md:aspect-[1600/756]">
-          <ProductImage
-            src="https://res.cloudinary.com/cmehevck/image/upload/v1791418035/WhatsApp_Image_2026-10-07_at_20.04.16.jpg"
-            alt="Banner Use D'lua"
-            label=""
-            priority
-          />
+          <div className="absolute inset-0 hidden md:block">
+            <ProductImage
+              src="https://res.cloudinary.com/cmehevck/image/upload/v1791418035/WhatsApp_Image_2026-10-07_at_20.04.16.jpg"
+              alt="Banner Use D'lua"
+              label=""
+            />
+          </div>
+          <div className="absolute inset-0 md:hidden">
+            <ProductImage
+              src="https://res.cloudinary.com/cmehevck/image/upload/v1791474571/WhatsApp_Image_2026-10-08_at_12.37.40.jpg"
+              alt="Banner Use D'lua"
+              label=""
+            />
+          </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/10 px-6 text-center md:block md:px-0">
             <div className="md:absolute md:left-[29.2%] md:top-[12%] md:w-[48%] md:-translate-x-1/2">
               <p className="eyebrow">Moda Feminina</p>
