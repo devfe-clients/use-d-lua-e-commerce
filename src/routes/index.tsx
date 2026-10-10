@@ -5,6 +5,12 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { ProductImage } from "@/components/ProductImage";
 import { CATEGORIES } from "@/lib/types";
 
+const CATEGORY_IMAGES = [
+  "https://res.cloudinary.com/cmehevck/image/upload/v1791640858/WhatsApp_Image_2026-10-10_at_10.39.15.jpg",
+  "https://res.cloudinary.com/cmehevck/image/upload/v1791640868/WhatsApp_Image_2026-10-10_at_10.39..jpg",
+  "https://res.cloudinary.com/cmehevck/image/upload/v1791640882/WhatsApp_Image_2026-10-10_at_10.39.1.jpg",
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -80,15 +86,17 @@ function Home() {
           <h2 className="mt-2 text-3xl">Escolha o seu estilo</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
-          {CATEGORIES.map((c) => (
+          {CATEGORIES.map((c, i) => (
             <Link
               key={c.slug}
               to="/categoria/$slug"
               params={{ slug: c.slug }}
-              className="group relative aspect-4/5 overflow-hidden"
+              className="group block"
             >
-              <ProductImage src={undefined} alt={c.name} label={`Foto ${c.name}`} />
-              <div className="absolute inset-x-0 bottom-0 bg-background/85 py-4 text-center">
+              <div className="relative aspect-4/5 overflow-hidden">
+                <ProductImage src={CATEGORY_IMAGES[i]} alt={c.name} label={`Foto ${c.name}`} />
+              </div>
+              <div className="py-4 text-center">
                 <span className="text-xs uppercase tracking-[0.22em]">{c.name}</span>
               </div>
             </Link>

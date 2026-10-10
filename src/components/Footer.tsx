@@ -9,7 +9,7 @@ export function Footer() {
         <div>
           <span className="brand-wordmark text-lg">Use D&apos;lua</span>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Moda feminina atemporal, feita para mulheres que vestem a própria essência.
+            Escolha você todos os dias , feita para mulheres que vestem a própria essência.
           </p>
         </div>
 
