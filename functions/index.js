@@ -1,32 +1,62 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const { MercadoPagoConfig, Preference } = require("mercadopago");
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+admin.initializeApp();
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+const mpClient = new MercadoPagoConfig({
+  accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
+});
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+exports.createCheckout = functions.https.onCall(async (data, context) => {
+  const uid = context.auth?.uid ?? null;
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+  if (!data.itens || !Array.isArray(data.itens) || data.itens.length === 0) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "O carrinho esta vazio."
+    );
+  }
+
+  if (!data.orderId) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "ID do pedido nao informado."
+    );
+  }
+
+  const items = data.itens.map((item) => ({
+    id: item.productId,
+    title: `${item.name} — ${item.size} / ${item.color}`,
+    quantity: item.quantity,
+    unit_price: item.price,
+    currency_id: "BRL",
+  }));
+
+  const preference = new Preference(mpClient);
+
+  const result = await preference.create({
+    body: {
+      items,
+      external_reference: data.orderId,
+      back_urls: {
+        success: `https://use-dlua.vercel.app/pedido/confirmacao?pedido=${data.orderId}`,
+        failure: `https://use-dlua.vercel.app/checkout?erro=pagamento`,
+        pending: `https://use-dlua.vercel.app/pedido/confirmacao?pedido=${data.orderId}&status=pending`,
+      },
+      auto_return: "approved",
+      statement_descriptor: "USE DLUA",
+    },
+  });
+
+  const db = admin.firestore();
+  await db.collection("orders").doc(data.orderId).update({
+    mpPreferenceId: result.id,
+    mpStatus: "pending",
+  });
+
+  return {
+    checkoutUrl: result.sandbox_init_point,
+    preferenceId: result.id,
+  };
+});
