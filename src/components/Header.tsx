@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { Headset, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { CATEGORIES } from "@/lib/types";
 import { useCart } from "@/lib/cart";
 
@@ -66,6 +66,15 @@ export function Header() {
               </span>
             )}
           </Link>
+          <a
+            href="https://wa.me/5513991419808"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Suporte pelo WhatsApp"
+            className="hover:text-gold"
+          >
+            <Headset className="h-5 w-5" />
+          </a>
         </div>
       </div>
 

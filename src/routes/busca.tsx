@@ -29,7 +29,7 @@ function SearchPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <p className="eyebrow">Busca</p>
+      <p className="eyebrow">Barra de pesquisa</p>
       <h1 className="mt-2 text-4xl">{q ? `Resultados para “${q}”` : "Todas as peças"}</h1>
 
       <form
@@ -42,8 +42,8 @@ function SearchPage() {
         <input
           value={term}
           onChange={(e) => setTerm(e.target.value)}
-          placeholder="Buscar por nome ou palavra-chave"
-          className="w-full border border-border bg-card px-3 py-2 text-sm outline-none focus:border-gold"
+          placeholder="Peças que você procura"
+          className="w-full rounded-full border border-border bg-card px-4 py-2 text-sm outline-none focus:border-gold"
           aria-label="Buscar produtos"
         />
         <button type="submit" className="btn-outline-ink">

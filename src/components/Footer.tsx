@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Facebook, Mail } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 import { CATEGORIES } from "@/lib/types";
 
 export function Footer() {
@@ -59,13 +59,22 @@ export function Footer() {
         <div>
           <p className="eyebrow">Redes sociais</p>
           <div className="mt-4 flex gap-4 text-muted-foreground">
-            <a href="#" aria-label="Instagram" className="hover:text-gold">
+            <a
+              href="https://instagram.com/use.dlua"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="hover:text-gold"
+            >
               <Instagram className="h-5 w-5" />
             </a>
-            <a href="#" aria-label="Facebook" className="hover:text-gold">
-              <Facebook className="h-5 w-5" />
-            </a>
-            <a href="#" aria-label="E-mail" className="hover:text-gold">
+            <a
+              href="https://mail.google.com/mail/?view=cm&to=use.dlua01@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="E-mail"
+              className="hover:text-gold"
+            >
               <Mail className="h-5 w-5" />
             </a>
           </div>
