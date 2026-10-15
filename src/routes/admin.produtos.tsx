@@ -164,7 +164,7 @@ function ProductForm({
   const [name, setName] = useState(initial.name ?? "");
   const [slug, setSlug] = useState(initial.slug ?? "");
   const [category, setCategory] = useState<CategorySlug>(
-    initial.category ?? "blusas",
+    initial.category ?? "pijamas",
   );
   const [description, setDescription] = useState(initial.description ?? "");
 

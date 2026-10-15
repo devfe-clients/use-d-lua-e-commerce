@@ -20,7 +20,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const items = itens.map((item) => ({
+    console.log("preco recebido:", itens[0]?.price, typeof itens[0]?.price);
+const items = itens.map((item) => ({
       id: item.productId,
       title: `${item.name} — ${item.size} / ${item.color}`,
       quantity: item.quantity,
