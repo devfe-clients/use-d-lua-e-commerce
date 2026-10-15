@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       id: item.productId,
       title: `${item.name} — ${item.size} / ${item.color}`,
       quantity: item.quantity,
-      unit_price: item.price,
+      unit_price: Number(item.price),
       currency_id: "BRL",
     }));
 
