@@ -25,7 +25,7 @@ const items = itens.map((item) => ({
       id: item.productId,
       title: `${item.name} — ${item.size} / ${item.color}`,
       quantity: item.quantity,
-      unit_price: Number(item.price),
+      unit_price: Number((item.price / 100).toFixed(2)),
       currency_id: "BRL",
     }));
 
