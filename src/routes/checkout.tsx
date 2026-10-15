@@ -64,28 +64,51 @@ function CheckoutPage() {
     );
   }
 
-  async function confirm() {
-    if (!payment) return;
-    setBusy(true);
-    try {
-      const order = await createOrder({
-        usuarioId: user?.uid ?? null,
+async function confirm() {
+  if (!payment) return;
+  setBusy(true);
+  try {
+    // 1. Cria o pedido no Firestore com status pending
+    const order = await createOrder({
+      usuarioId: user?.uid ?? null,
+      itens: items,
+      subtotal,
+      desconto: discount,
+      total,
+      cupom: coupon?.code ?? null,
+      enderecoEntrega: addr,
+      formaPagamento: payment,
+    });
+
+    // 2. Chama a Vercel Function para criar a preferencia no Mercado Pago
+    const response = await fetch("/api/create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         itens: items,
-        subtotal,
-        desconto: discount,
-        total,
-        cupom: coupon?.code ?? null,
-        enderecoEntrega: addr,
-        formaPagamento: payment,
-      });
-      await decrementStock(items).catch(() => undefined);
-      clear();
-      navigate({ to: "/pedido/confirmacao", search: { pedido: order.id } });
-    } catch (err) {
-      setBusy(false);
-      toast.error(err instanceof Error ? err.message : "Não foi possível confirmar o pedido.");
+        orderId: order.id,
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error ?? "Erro ao criar checkout.");
     }
+
+    const { checkoutUrl } = await response.json();
+
+    // 3. Limpa o carrinho antes de redirecionar
+    await decrementStock(items).catch(() => undefined);
+    clear();
+
+    // 4. Redireciona para o Mercado Pago
+    window.location.href = checkoutUrl;
+
+  } catch (err) {
+    setBusy(false);
+    toast.error(err instanceof Error ? err.message : "Nao foi possivel confirmar o pedido.");
   }
+}
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
