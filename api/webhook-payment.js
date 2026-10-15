@@ -1,5 +1,5 @@
-const { MercadoPagoConfig, Payment } = require("mercadopago");
-const admin = require("firebase-admin");
+import { MercadoPagoConfig, Payment } from "mercadopago";
+import admin from "firebase-admin";
 
 // Inicializa o Firebase Admin so uma vez
 if (!admin.apps.length) {
