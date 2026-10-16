@@ -11,7 +11,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       to="/produto/$id"
-      params={{ id: product.slug }}
+      params={{ id: product.id }}
       className="group block"
       aria-label={product.name}
     >

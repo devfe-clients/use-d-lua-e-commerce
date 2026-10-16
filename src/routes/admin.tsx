@@ -11,18 +11,13 @@
  */
 
 import { useState } from "react";
-import {
-  createFileRoute,
-  Link,
-  Outlet,
-  useLocation,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 
 // createFileRoute registra esta rota no TanStack Router
 // O caminho "/admin" faz com que todas as subrotas (/admin/produtos, /admin/pedidos)
 // passem por aqui antes de renderizar
-export const Route = (createFileRoute as any)("/admin")({
+export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
@@ -170,9 +165,7 @@ function LoginScreen() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs uppercase tracking-widest text-muted-foreground">
-              Senha
-            </label>
+            <label className="text-xs uppercase tracking-widest text-muted-foreground">Senha</label>
             <input
               type="password"
               value={password}
@@ -185,11 +178,7 @@ function LoginScreen() {
           {/* Mensagem de erro só aparece se houver falha no login */}
           {error && <p className="text-xs text-destructive">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-gold mt-2 disabled:opacity-50"
-          >
+          <button type="submit" disabled={loading} className="btn-gold mt-2 disabled:opacity-50">
             {loading ? "Entrando…" : "Entrar"}
           </button>
         </form>
