@@ -46,7 +46,7 @@ const items = itens.map((item) => ({
     });
 
     return res.status(200).json({
-      checkoutUrl: result.sandbox_init_point,
+      checkoutUrl: result.init_point,
       preferenceId: result.id,
     });
   } catch (error) {

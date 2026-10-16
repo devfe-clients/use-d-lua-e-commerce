@@ -56,7 +56,7 @@ exports.createCheckout = functions.https.onCall(async (data, context) => {
   });
 
   return {
-    checkoutUrl: result.sandbox_init_point,
+    checkoutUrl: result.init_point,
     preferenceId: result.id,
   };
 });

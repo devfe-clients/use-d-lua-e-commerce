@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Barcode, Check, CreditCard, QrCode } from "lucide-react";
+import { Check, CreditCard, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
@@ -40,7 +40,6 @@ const FIELDS: { key: keyof ShippingAddress; label: string; span?: boolean; optio
 const PAYMENTS: { key: PaymentMethod; icon: typeof CreditCard; hint: string }[] = [
   { key: "cartao", icon: CreditCard, hint: "Em até 6x sem juros" },
   { key: "pix", icon: QrCode, hint: "Aprovação imediata" },
-  { key: "boleto", icon: Barcode, hint: "Vence em 3 dias úteis" },
 ];
 
 function CheckoutPage() {
