@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Barcode, Check, CreditCard, QrCode } from "lucide-react";
 import { toast } from "sonner";
@@ -45,7 +45,8 @@ const PAYMENTS: { key: PaymentMethod; icon: typeof CreditCard; hint: string }[] 
 
 function CheckoutPage() {
   const { items, subtotal, discount, total, coupon, clear } = useCart();
-  const { user } = useAuth();
+  // Pega também o loading para não redirecionar antes do Firebase confirmar a sessão
+const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [addr, setAddr] = useState<ShippingAddress>({
@@ -54,6 +55,17 @@ function CheckoutPage() {
   });
   const [payment, setPayment] = useState<PaymentMethod | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Redireciona para o login se o usuário não estiver autenticado.
+  // O loading evita redirecionar enquanto o Firebase ainda está verificando a sessão.
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate({ to: "/conta" });
+    }
+  }, [user, loading, navigate]);
+
+  // Enquanto o Firebase verifica a sessão, não renderiza nada para evitar flash de conteúdo
+  if (loading) return null;
 
   if (items.length === 0 && !busy) {
     return (
