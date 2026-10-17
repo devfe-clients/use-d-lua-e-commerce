@@ -50,20 +50,16 @@ const PAYMENTS: { key: PaymentMethod; icon: typeof CreditCard; hint: string }[] 
 function CheckoutPage() {
   const { items, subtotal, discount, total, coupon, clear } = useCart();
   // Pega também o loading para não redirecionar antes do Firebase confirmar a sessão
-const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [addr, setAddr] = useState<ShippingAddress>({
     nome: "",
-    email: "",
     telefone: "",
-    cep: "",
     rua: "",
     numero: "",
     complemento: "",
     bairro: "",
-    cidade: "",
-    estado: "",
   });
   const [payment, setPayment] = useState<PaymentMethod | null>(null);
   const [busy, setBusy] = useState(false);

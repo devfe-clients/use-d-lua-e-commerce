@@ -74,15 +74,16 @@ export const STATUS_LABELS: Record<OrderStatus, string> = {
 
 export type ShippingAddress = {
   nome: string;
-  email: string;
   telefone: string;
-  cep: string;
   rua: string;
   numero: string;
   complemento?: string;
   bairro: string;
-  cidade: string;
-  estado: string;
+  // Campos antigos: pedidos já salvos podem ter esses dados
+  email?: string;
+  cep?: string;
+  cidade?: string;
+  estado?: string;
 };
 
 export type Order = {
