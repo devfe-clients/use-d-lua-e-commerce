@@ -2,8 +2,10 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
   type User,
@@ -18,6 +20,7 @@ type AuthContextValue = {
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -71,6 +74,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await setDoc(doc(db, COLLECTIONS.users, cred.user.uid), {
             name,
             email,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      },
+      // Abre o popup do Google para o usuário escolher a conta
+      async signInWithGoogle() {
+        const auth = getFirebaseAuth();
+        if (!auth) throw new Error("Firebase ainda não configurado.");
+        const provider = new GoogleAuthProvider();
+        const cred = await signInWithPopup(auth, provider);
+        // Salva os dados no Firestore igual ao signUp, mas sem precisar de senha
+        const db = getDb();
+        if (db) {
+          await setDoc(doc(db, COLLECTIONS.users, cred.user.uid), {
+            name: cred.user.displayName ?? "",
+            email: cred.user.email ?? "",
             createdAt: new Date().toISOString(),
           });
         }

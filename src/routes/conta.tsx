@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Chrome } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
@@ -19,12 +20,26 @@ export const Route = createFileRoute("/conta")({
 });
 
 function AccountPage() {
-  const { user, loading, configured, signIn, signUp, logout } = useAuth();
+  const { user, loading, configured, signIn, signUp, signInWithGoogle, logout } = useAuth();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  // Estado separado para o botão do Google não desabilitar o formulário de e-mail
+  const [busyGoogle, setBusyGoogle] = useState(false);
+
+  async function submitGoogle() {
+    setBusyGoogle(true);
+    try {
+      await signInWithGoogle();
+      toast.success("Bem-vinda à Use D'lua!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível entrar com o Google.");
+    } finally {
+      setBusyGoogle(false);
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -108,6 +123,23 @@ function AccountPage() {
           {mode === "login" ? "Entrar" : "Criar conta"}
         </button>
       </form>
+
+      {/* Separador visual entre os dois métodos de login */}
+      <div className="mt-6 flex items-center gap-3">
+        <span className="h-px flex-1 bg-border" />
+        <span className="text-xs text-muted-foreground uppercase tracking-[0.16em]">ou</span>
+        <span className="h-px flex-1 bg-border" />
+      </div>
+
+      {/* Botão de login com Google — usa o popup do Firebase */}
+      <button
+        onClick={() => void submitGoogle()}
+        disabled={busyGoogle || !configured}
+        className="btn-outline-ink mt-4 flex w-full items-center justify-center gap-2"
+      >
+        <Chrome className="h-4 w-4" />
+        {busyGoogle ? "Entrando…" : "Entrar com Google"}
+      </button>
 
       <button
         onClick={() => setMode(mode === "login" ? "signup" : "login")}
