@@ -6,7 +6,9 @@ import { OrderSummary } from "@/components/OrderSummary";
 import { PAYMENT_LABELS, STATUS_LABELS, type Order } from "@/lib/types";
 
 export const Route = createFileRoute("/pedido/confirmacao")({
-  validateSearch: (s: Record<string, unknown>) => ({ pedido: typeof s["pedido"] === "string" ? s["pedido"] : "" }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    pedido: typeof s["pedido"] === "string" ? s["pedido"] : "",
+  }),
   head: () => ({
     meta: [
       { title: "Pedido confirmado — Use D'lua" },
@@ -25,15 +27,21 @@ function ConfirmationPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchOrder(pedido).then(setOrder).catch(() => setOrder(null)).finally(() => setLoading(false));
+    fetchOrder(pedido)
+      .then(setOrder)
+      .catch(() => setOrder(null))
+      .finally(() => setLoading(false));
   }, [pedido]);
+  if (loading)
+    return <p className="py-32 text-center text-sm text-muted-foreground">Carregando…</p>;
 
-  if (loading) return <p className="py-32 text-center text-sm text-muted-foreground">Carregando…</p>;
   if (!order)
     return (
       <div className="py-32 text-center">
         <h1 className="text-3xl">Pedido não encontrado</h1>
-        <Link to="/" className="btn-gold mt-8">Voltar para a loja</Link>
+        <Link to="/" className="btn-gold mt-8">
+          Voltar para a loja
+        </Link>
       </div>
     );
 
@@ -57,8 +65,9 @@ function ConfirmationPage() {
           <p className="eyebrow">Endereço de entrega</p>
           <p className="mt-2">{a.nome}</p>
           <p className="text-muted-foreground">
-            {a.rua}, {a.numero} {a.complemento}<br />
-            {a.bairro} — {a.cidade}/{a.estado}<br />CEP {a.cep}
+            {a.rua}, {a.numero} {a.complemento}
+            <br />
+            {a.bairro}
           </p>
         </div>
         <div className="border border-border bg-card p-5">
@@ -69,12 +78,21 @@ function ConfirmationPage() {
 
       <div className="mt-6 border border-border bg-card p-5">
         <p className="eyebrow">Resumo da compra</p>
-        <OrderSummary items={order.itens} subtotal={order.subtotal} discount={order.desconto} total={order.total} />
+        <OrderSummary
+          items={order.itens}
+          subtotal={order.subtotal}
+          discount={order.desconto}
+          total={order.total}
+        />
       </div>
 
       <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <Link to="/" className="btn-outline-ink">Continuar comprando</Link>
-        <Link to="/rastreamento" search={{ pedido: order.id }} className="btn-gold">Acompanhar pedido</Link>
+        <Link to="/" className="btn-outline-ink">
+          Continuar comprando
+        </Link>
+        <Link to="/rastreamento" search={{ pedido: order.id }} className="btn-gold">
+          Acompanhar pedido
+        </Link>
       </div>
     </div>
   );

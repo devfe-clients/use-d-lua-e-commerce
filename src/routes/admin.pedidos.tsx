@@ -11,24 +11,14 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { adminFetchOrders, adminUpdateOrderStatus } from "@/lib/admin";
-import {
-  formatPrice,
-  STATUS_LABELS,
-  type Order,
-  type OrderStatus,
-} from "@/lib/types";
+import { formatPrice, STATUS_LABELS, type Order, type OrderStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/pedidos")({
   component: AdminPedidos,
 });
 
 // Sequência de status — a ordem importa para saber qual é o "próximo"
-const STATUS_FLOW: OrderStatus[] = [
-  "pending",
-  "separacao",
-  "enviado",
-  "entregue",
-];
+const STATUS_FLOW: OrderStatus[] = ["pending", "separacao", "enviado", "entregue"];
 
 function AdminPedidos() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -72,16 +62,13 @@ function AdminPedidos() {
     await adminUpdateOrderStatus(order.id, nextStatus);
 
     // Atualiza o estado local para refletir a mudança sem recarregar tudo
-    setOrders((prev) =>
-      prev.map((o) =>
-        o.id === order.id ? { ...o, status: nextStatus } : o,
-      ) as Order[],
+    setOrders(
+      (prev) => prev.map((o) => (o.id === order.id ? { ...o, status: nextStatus } : o)) as Order[],
     );
   }
 
   // Filtra os pedidos de acordo com o status selecionado
-  const filtered =
-    filter === "all" ? orders : orders.filter((o) => o.status === filter);
+  const filtered = filter === "all" ? orders : orders.filter((o) => o.status === filter);
 
   return (
     <div>
@@ -149,8 +136,7 @@ function OrderRow({
 }) {
   const currentIndex = order.status ? STATUS_FLOW.indexOf(order.status) : -1;
   // Pedido pode avançar se ainda não chegou no último status e não está cancelado
-  const canAdvance =
-    currentIndex !== -1 && currentIndex < STATUS_FLOW.length - 1;
+  const canAdvance = currentIndex !== -1 && currentIndex < STATUS_FLOW.length - 1;
 
   return (
     <div className="rounded border border-border">
@@ -160,9 +146,7 @@ function OrderRow({
         onClick={onToggle}
       >
         {/* ID do pedido — mostramos só os primeiros 8 caracteres para ficar legível */}
-        <span className="font-mono text-xs text-muted-foreground">
-          #{order.id.slice(0, 8)}
-        </span>
+        <span className="font-mono text-xs text-muted-foreground">#{order.id.slice(0, 8)}</span>
 
         <span className="text-sm font-medium">{order.enderecoEntrega.nome}</span>
 
@@ -177,16 +161,13 @@ function OrderRow({
         </span>
 
         {/* Seta indica se está expandido ou não */}
-        <span className="text-xs text-muted-foreground">
-          {expanded ? "▲" : "▼"}
-        </span>
+        <span className="text-xs text-muted-foreground">{expanded ? "▲" : "▼"}</span>
       </div>
 
       {/* Detalhes — só aparecem quando expanded === true */}
       {expanded && (
         <div className="border-t border-border px-4 py-4">
           <div className="grid gap-6 sm:grid-cols-2">
-
             {/* Itens do pedido */}
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -229,18 +210,11 @@ function OrderRow({
               </p>
               <address className="not-italic text-sm leading-relaxed text-muted-foreground">
                 {order.enderecoEntrega.rua}, {order.enderecoEntrega.numero}
-                {order.enderecoEntrega.complemento
-                  ? ` — ${order.enderecoEntrega.complemento}`
-                  : ""}
+                {order.enderecoEntrega.complemento ? ` — ${order.enderecoEntrega.complemento}` : ""}
                 <br />
-                {order.enderecoEntrega.bairro} — {order.enderecoEntrega.cidade}/
-                {order.enderecoEntrega.estado}
-                <br />
-                CEP {order.enderecoEntrega.cep}
+                {order.enderecoEntrega.bairro}
                 <br />
                 {order.enderecoEntrega.telefone}
-                <br />
-                {order.enderecoEntrega.email}
               </address>
             </div>
           </div>
@@ -251,7 +225,8 @@ function OrderRow({
               {/* STATUS_FLOW[currentIndex + 1] é o próximo status na sequência */}
               <button onClick={onAdvance} className="btn-gold text-xs">
                 Avançar para:{" "}
-                {order.status && STATUS_LABELS[STATUS_FLOW[STATUS_FLOW.indexOf(order.status) + 1] as OrderStatus]}
+                {order.status &&
+                  STATUS_LABELS[STATUS_FLOW[STATUS_FLOW.indexOf(order.status) + 1] as OrderStatus]}
               </button>
             </div>
           )}
@@ -311,9 +286,7 @@ function StatusBadge({ status }: { status: string | undefined }) {
   if (!status) return null;
 
   return (
-    <span
-      className={`rounded px-2 py-0.5 text-xs font-medium ${colors[status] ?? "bg-secondary"}`}
-    >
+    <span className={`rounded px-2 py-0.5 text-xs font-medium ${colors[status] ?? "bg-secondary"}`}>
       {STATUS_LABELS[status as OrderStatus] ?? status}
     </span>
   );

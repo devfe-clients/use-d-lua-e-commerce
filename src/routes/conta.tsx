@@ -53,7 +53,9 @@ function AccountPage() {
           Seus pedidos aparecerão aqui assim que o checkout estiver ativo.
         </p>
         <div className="mt-8 flex justify-center gap-3">
-          <Link to="/conta/pedidos" className="btn-gold">Meus pedidos</Link>
+          <Link to="/conta/pedidos" className="btn-gold">
+            Meus pedidos
+          </Link>
           <button onClick={() => void logout()} className="btn-outline-ink">
             Sair
           </button>

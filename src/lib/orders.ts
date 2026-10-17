@@ -1,4 +1,13 @@
-import { collection, doc, getDoc, getDocs, query, runTransaction, setDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  runTransaction,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { COLLECTIONS, getDb } from "./firebase";
 import type { CartItem, Order } from "./types";
 
@@ -50,15 +59,17 @@ export async function fetchOrder(id: string): Promise<Order | null> {
   const db = getDb();
   if (!db) return readLocal().find((o) => o.id === clean) ?? null;
   const snap = await getDoc(doc(db, COLLECTIONS.orders, clean));
-  return snap.exists() ? ({ ...(snap.data() as Order), id: snap.id }) : null;
+  return snap.exists() ? { ...(snap.data() as Order), id: snap.id } : null;
 }
 
 export async function fetchOrdersByUser(usuarioId: string): Promise<Order[]> {
   const db = getDb();
   const list = db
-    ? (await getDocs(query(collection(db, COLLECTIONS.orders), where("usuarioId", "==", usuarioId)))).docs.map(
-        (d) => ({ ...(d.data() as Order), id: d.id }),
-      )
+    ? (
+        await getDocs(
+          query(collection(db, COLLECTIONS.orders), where("usuarioId", "==", usuarioId)),
+        )
+      ).docs.map((d) => ({ ...(d.data() as Order), id: d.id }))
     : readLocal().filter((o) => o.usuarioId === usuarioId);
   return list.sort((a, b) => b.criadoEm.localeCompare(a.criadoEm));
 }

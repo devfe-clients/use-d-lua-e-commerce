@@ -12,7 +12,10 @@ export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
       { title: "Checkout — Use D'lua" },
-      { name: "description", content: "Finalize sua compra na Use D'lua: entrega, pagamento e resumo." },
+      {
+        name: "description",
+        content: "Finalize sua compra na Use D'lua: entrega, pagamento e resumo.",
+      },
       { property: "og:title", content: "Checkout — Use D'lua" },
       { property: "og:description", content: "Finalize sua compra na Use D'lua." },
     ],
@@ -24,17 +27,19 @@ const STEPS = ["Entrega", "Pagamento", "Resumo"];
 const inputCls =
   "w-full border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-gold";
 
-const FIELDS: { key: keyof ShippingAddress; label: string; span?: boolean; optional?: boolean; type?: string }[] = [
+const FIELDS: {
+  key: keyof ShippingAddress;
+  label: string;
+  span?: boolean;
+  optional?: boolean;
+  type?: string;
+}[] = [
   { key: "nome", label: "Nome completo", span: true },
-  { key: "email", label: "E-mail", type: "email" },
   { key: "telefone", label: "Telefone", type: "tel" },
-  { key: "cep", label: "CEP" },
   { key: "rua", label: "Rua" },
   { key: "numero", label: "Número" },
   { key: "complemento", label: "Complemento", optional: true },
   { key: "bairro", label: "Bairro" },
-  { key: "cidade", label: "Cidade" },
-  { key: "estado", label: "Estado (UF)" },
 ];
 
 const PAYMENTS: { key: PaymentMethod; icon: typeof CreditCard; hint: string }[] = [
@@ -49,8 +54,16 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [addr, setAddr] = useState<ShippingAddress>({
-    nome: "", email: "", telefone: "", cep: "", rua: "", numero: "",
-    complemento: "", bairro: "", cidade: "", estado: "",
+    nome: "",
+    email: "",
+    telefone: "",
+    cep: "",
+    rua: "",
+    numero: "",
+    complemento: "",
+    bairro: "",
+    cidade: "",
+    estado: "",
   });
   const [payment, setPayment] = useState<PaymentMethod | null>(null);
   const [busy, setBusy] = useState(false);
@@ -59,56 +72,57 @@ function CheckoutPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-28 text-center">
         <h1 className="text-3xl">Sua sacola está vazia</h1>
-        <Link to="/" className="btn-gold mt-8">Voltar para a loja</Link>
+        <Link to="/" className="btn-gold mt-8">
+          Voltar para a loja
+        </Link>
       </div>
     );
   }
 
-async function confirm() {
-  if (!payment) return;
-  setBusy(true);
-  try {
-    // 1. Cria o pedido no Firestore com status pending
-    const order = await createOrder({
-      usuarioId: user?.uid ?? null,
-      itens: items,
-      subtotal,
-      desconto: discount,
-      total,
-      cupom: coupon?.code ?? null,
-      enderecoEntrega: addr,
-      formaPagamento: payment,
-    });
-
-    // 2. Chama a Vercel Function para criar a preferencia no Mercado Pago
-    const response = await fetch("/api/create-checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+  async function confirm() {
+    if (!payment) return;
+    setBusy(true);
+    try {
+      // 1. Cria o pedido no Firestore com status pending
+      const order = await createOrder({
+        usuarioId: user?.uid ?? null,
         itens: items,
-        orderId: order.id,
-      }),
-    });
+        subtotal,
+        desconto: discount,
+        total,
+        cupom: coupon?.code ?? null,
+        enderecoEntrega: addr,
+        formaPagamento: payment,
+      });
 
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error ?? "Erro ao criar checkout.");
+      // 2. Chama a Vercel Function para criar a preferencia no Mercado Pago
+      const response = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itens: items,
+          orderId: order.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error ?? "Erro ao criar checkout.");
+      }
+
+      const { checkoutUrl } = await response.json();
+
+      // 3. Limpa o carrinho antes de redirecionar
+      await decrementStock(items).catch(() => undefined);
+      clear();
+
+      // 4. Redireciona para o Mercado Pago
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      setBusy(false);
+      toast.error(err instanceof Error ? err.message : "Nao foi possivel confirmar o pedido.");
     }
-
-    const { checkoutUrl } = await response.json();
-
-    // 3. Limpa o carrinho antes de redirecionar
-    await decrementStock(items).catch(() => undefined);
-    clear();
-
-    // 4. Redireciona para o Mercado Pago
-    window.location.href = checkoutUrl;
-
-  } catch (err) {
-    setBusy(false);
-    toast.error(err instanceof Error ? err.message : "Nao foi possivel confirmar o pedido.");
   }
-}
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
@@ -120,7 +134,9 @@ async function confirm() {
           <li key={s} className="flex flex-1 items-center gap-2">
             <span
               className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-[11px] ${
-                i <= step ? "border-gold bg-gold text-primary-foreground" : "border-border text-muted-foreground"
+                i <= step
+                  ? "border-gold bg-gold text-primary-foreground"
+                  : "border-border text-muted-foreground"
               }`}
             >
               {i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}
@@ -153,7 +169,9 @@ async function confirm() {
                 />
               ))}
             </div>
-            <button type="submit" className="btn-gold mt-8 w-full sm:w-auto">Continuar para pagamento</button>
+            <button type="submit" className="btn-gold mt-8 w-full sm:w-auto">
+              Continuar para pagamento
+            </button>
           </form>
         )}
 
@@ -176,10 +194,16 @@ async function confirm() {
                 </button>
               ))}
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">Pagamento simulado — nenhuma cobrança será feita.</p>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Pagamento simulado — nenhuma cobrança será feita.
+            </p>
             <div className="mt-8 flex gap-3">
-              <button onClick={() => setStep(0)} className="btn-outline-ink">Voltar</button>
-              <button disabled={!payment} onClick={() => setStep(2)} className="btn-gold">Revisar pedido</button>
+              <button onClick={() => setStep(0)} className="btn-outline-ink">
+                Voltar
+              </button>
+              <button disabled={!payment} onClick={() => setStep(2)} className="btn-gold">
+                Revisar pedido
+              </button>
             </div>
           </div>
         )}
@@ -192,7 +216,7 @@ async function confirm() {
                 <p className="eyebrow">Entrega</p>
                 <p className="mt-2">{addr.nome}</p>
                 <p className="text-muted-foreground">
-                  {addr.rua}, {addr.numero} {addr.complemento} — {addr.bairro}, {addr.cidade}/{addr.estado} · {addr.cep}
+                  {addr.rua}, {addr.numero} {addr.complemento} — {addr.bairro}
                 </p>
               </div>
               <div className="bg-secondary p-4">
@@ -204,7 +228,9 @@ async function confirm() {
               <OrderSummary items={items} subtotal={subtotal} discount={discount} total={total} />
             </div>
             <div className="mt-8 flex gap-3">
-              <button onClick={() => setStep(1)} className="btn-outline-ink" disabled={busy}>Voltar</button>
+              <button onClick={() => setStep(1)} className="btn-outline-ink" disabled={busy}>
+                Voltar
+              </button>
               <button onClick={() => void confirm()} className="btn-gold flex-1" disabled={busy}>
                 {busy ? "Confirmando…" : "Confirmar pedido"}
               </button>

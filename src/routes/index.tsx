@@ -6,7 +6,7 @@ import { ProductImage } from "@/components/ProductImage";
 import { CATEGORIES } from "@/lib/types";
 
 const CATEGORY_IMAGES = [
-  "https://res.cloudinary.com/cmehevck/image/upload/v1791640858/WhatsApp_Image_2026-10-10_at_10.39.15.jpg",
+  "https://res.cloudinary.com/cmehevck/image/upload/v1792250079/WhatsApp_Image_2026-10-17_at_10.57.54.jpg",
   "https://res.cloudinary.com/cmehevck/image/upload/v1791640868/WhatsApp_Image_2026-10-10_at_10.39..jpg",
   "https://res.cloudinary.com/cmehevck/image/upload/v1791640882/WhatsApp_Image_2026-10-10_at_10.39.1.jpg",
 ];
