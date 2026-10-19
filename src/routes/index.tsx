@@ -85,13 +85,13 @@ function Home() {
           <p className="eyebrow">Categorias em destaque</p>
           <h2 className="mt-2 text-3xl">Escolha o seu estilo</h2>
         </div>
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-4 px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:scroll-pl-6 sm:px-6 lg:-mx-8 lg:scroll-pl-8 lg:px-8">
           {CATEGORIES.map((c, i) => (
             <Link
               key={c.slug}
               to="/categoria/$slug"
               params={{ slug: c.slug }}
-              className="group block"
+              className="group block w-[72%] shrink-0 snap-start sm:w-[45%] md:w-[calc((100%_-_2.5rem)/3)]"
             >
               <div className="relative aspect-4/5 overflow-hidden">
                 <ProductImage src={CATEGORY_IMAGES[i]} alt={c.name} label={`Foto ${c.name}`} />
@@ -111,7 +111,7 @@ function Home() {
             <h2 className="mt-2 text-3xl">Lançamentos</h2>
           </div>
         </div>
-        <ProductGrid products={lancamentos} />
+        <ProductGrid products={lancamentos} carousel />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
@@ -119,7 +119,7 @@ function Home() {
           <p className="eyebrow">Favoritas das clientes</p>
           <h2 className="mt-2 text-3xl">Mais vendidos</h2>
         </div>
-        <ProductGrid products={maisVendidos} />
+        <ProductGrid products={maisVendidos} carousel />
       </section>
     </div>
   );
