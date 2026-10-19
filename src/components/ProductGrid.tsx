@@ -17,11 +17,11 @@ export function ProductGrid({
   }
   if (carousel) {
     return (
-      <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-4 px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:scroll-pl-6 sm:px-6 lg:-mx-8 lg:scroll-pl-8 lg:px-8">
+      <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-4 px-4 pb-2 scrollbar-none  [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:scroll-pl-6 sm:px-6 lg:-mx-8 lg:scroll-pl-8 lg:px-8">
         {products.map((p) => (
           <div
             key={p.id}
-            className="w-[44%] shrink-0 snap-start sm:w-[30%] md:w-[calc((100%_-_2.5rem)/3)] lg:w-[calc((100%_-_3.75rem)/4)]"
+            className="w-[44%] shrink-0 snap-start sm:w-[30%] md:w-[calc((100%-2.5rem)/3)] lg:w-[calc((100%-3.75rem)/4)]"
           >
             <ProductCard product={p} />
           </div>

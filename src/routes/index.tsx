@@ -43,7 +43,7 @@ function Home() {
     <div>
       {/* Banner principal — substitua pela sua imagem */}
       <section className="relative">
-        <div className="relative min-h-[420px] w-full md:min-h-0 md:aspect-[1600/756]">
+        <div className="relative min-h-105 w-full md:min-h-0 md:aspect-1600/756">
           <div className="absolute inset-0 hidden md:block">
             <ProductImage
               src="https://res.cloudinary.com/cmehevck/image/upload/v1791418035/WhatsApp_Image_2026-10-07_at_20.04.16.jpg"
@@ -61,11 +61,11 @@ function Home() {
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/10 px-6 text-center md:block md:px-0">
             <div className="md:absolute md:left-[29.2%] md:top-[12%] md:w-[48%] md:-translate-x-1/2">
               <p className="eyebrow">Moda Feminina</p>
-              <h1 className="mt-4 text-4xl leading-tight md:text-[length:clamp(1.5rem,4.6vw,5rem)]">
+              <h1 className="mt-4 text-4xl leading-tight md:text-[clamp(1.5rem,4.6vw,5rem)]">
                 Assim Como a Lua <br className="hidden md:block" />
                 somos feitas de Fases
               </h1>
-              <p className="mt-4 text-sm text-ink/80 md:text-[length:clamp(0.875rem,1.25vw,1.25rem)]">
+              <p className="mt-4 text-sm text-ink/80 md:text-[clamp(0.875rem,1.25vw,1.25rem)]">
                 Peças escolhidas com cuidado elegância qualidade e delicadeza
               </p>
             </div>
@@ -85,13 +85,13 @@ function Home() {
           <p className="eyebrow">Categorias em destaque</p>
           <h2 className="mt-2 text-3xl">Escolha o seu estilo</h2>
         </div>
-        <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-4 px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:scroll-pl-6 sm:px-6 lg:-mx-8 lg:scroll-pl-8 lg:px-8">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-4 px-4 pb-2 scrollbar-width:none [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:scroll-pl-6 sm:px-6 lg:-mx-8 lg:scroll-pl-8 lg:px-8">
           {CATEGORIES.map((c, i) => (
             <Link
               key={c.slug}
               to="/categoria/$slug"
               params={{ slug: c.slug }}
-              className="group block w-[72%] shrink-0 snap-start sm:w-[45%] md:w-[calc((100%_-_2.5rem)/3)]"
+              className="group block w-[72%] shrink-0 snap-start sm:w-[45%] md:w-calc((100%_-_2.5rem)/3)"
             >
               <div className="relative aspect-4/5 overflow-hidden">
                 <ProductImage src={CATEGORY_IMAGES[i]} alt={c.name} label={`Foto ${c.name}`} />
