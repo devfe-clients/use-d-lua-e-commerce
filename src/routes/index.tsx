@@ -5,12 +5,18 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { ProductImage } from "@/components/ProductImage";
 import { CATEGORIES } from "@/lib/types";
 
+// Otimiza imagens do Cloudinary: formato e qualidade automáticos + largura limitada
+const cld = (url: string, w: number) => url.replace("/upload/", `/upload/f_auto,q_auto,w_${w}/`);
+const BANNER_DESKTOP =
+  "https://res.cloudinary.com/cmehevck/image/upload/v1791418035/WhatsApp_Image_2026-10-07_at_20.04.16.jpg";
+const BANNER_MOBILE =
+  "https://res.cloudinary.com/cmehevck/image/upload/v1792512910/WhatsApp_Image_2026-10-20_at_13.13.46.jpg";
+
 const CATEGORY_IMAGES = [
-  "https://res.cloudinary.com/cmehevck/image/upload/v1792250079/WhatsApp_Image_2026-10-17_at_10.57.54.jpg",
+  "https://res.cloudinary.com/cmehevck/image/upload/v1792505770/WhatsApp_Image_2026-10-20_at_11.15.10.jpg",
   "https://res.cloudinary.com/cmehevck/image/upload/v1791640868/WhatsApp_Image_2026-10-10_at_10.39..jpg",
   "https://res.cloudinary.com/cmehevck/image/upload/v1791640882/WhatsApp_Image_2026-10-10_at_10.39.1.jpg",
 ];
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -27,6 +33,22 @@ export const Route = createFileRoute("/")({
           "Blusas, calças e corsets femininos com design minimalista e acabamento impecável.",
       },
     ],
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: cld(BANNER_MOBILE, 800),
+        media: "(max-width: 767px)",
+        fetchPriority: "high",
+      },
+      {
+        rel: "preload",
+        as: "image",
+        href: cld(BANNER_DESKTOP, 1600),
+        media: "(min-width: 768px)",
+        fetchPriority: "high",
+      },
+    ],
   }),
   component: Home,
 });
@@ -36,27 +58,25 @@ function Home() {
 
   const lancamentos = [...products]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 4);
-  const maisVendidos = products.filter((p) => p.bestSeller).slice(0, 4);
+    .slice(0, 8);
+  const maisVendidos = products.filter((p) => p.bestSeller).slice(0, 8);
 
   return (
     <div>
       {/* Banner principal — substitua pela sua imagem */}
       <section className="relative">
         <div className="relative min-h-105 w-full md:min-h-0 md:aspect-1600/756">
-          <div className="absolute inset-0 hidden md:block">
-            <ProductImage
-              src="https://res.cloudinary.com/cmehevck/image/upload/v1791418035/WhatsApp_Image_2026-10-07_at_20.04.16.jpg"
-              alt="Banner Use D'lua"
-              label=""
-            />
-          </div>
-          <div className="absolute inset-0 md:hidden">
-            <ProductImage
-              src="https://res.cloudinary.com/cmehevck/image/upload/v1791474571/WhatsApp_Image_2026-10-08_at_12.37.40.jpg"
-              alt="Banner Use D'lua"
-              label=""
-            />
+          <div className="absolute inset-0">
+            <picture>
+              <source media="(min-width: 768px)" srcSet={cld(BANNER_DESKTOP, 1600)} />
+              <img
+                src={cld(BANNER_MOBILE, 800)}
+                alt="Banner Use D'lua"
+                fetchPriority="high"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            </picture>
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/10 px-6 text-center md:block md:px-0">
             <div className="md:absolute md:left-[29.2%] md:top-[12%] md:w-[48%] md:-translate-x-1/2">
@@ -91,10 +111,15 @@ function Home() {
               key={c.slug}
               to="/categoria/$slug"
               params={{ slug: c.slug }}
-              className="group block w-[72%] shrink-0 snap-start sm:w-[45%] md:w-calc((100%_-_2.5rem)/3)"
+              className="group block w-[72%] shrink-0 snap-start sm:w-[45%] md:w-[calc((100%-2.5rem)/3)]"
             >
               <div className="relative aspect-4/5 overflow-hidden">
-                <ProductImage src={CATEGORY_IMAGES[i]} alt={c.name} label={`Foto ${c.name}`} />
+                <ProductImage
+                  src={CATEGORY_IMAGES[i]}
+                  alt={c.name}
+                  label={`Foto ${c.name}`}
+                  sizes="(min-width: 768px) 33vw, 72vw"
+                />
               </div>
               <div className="py-4 text-center">
                 <span className="text-xs uppercase tracking-[0.22em]">{c.name}</span>
