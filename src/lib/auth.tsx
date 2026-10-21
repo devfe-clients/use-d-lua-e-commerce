@@ -1,15 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import {
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  updateProfile,
-  type User,
-} from "firebase/auth";
+import type { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { COLLECTIONS, getDb, getFirebaseAuth, isFirebaseConfigured } from "./firebase";
 
@@ -33,24 +24,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const configured = isFirebaseConfigured();
 
   useEffect(() => {
-    const auth = getFirebaseAuth();
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-    return onAuthStateChanged(auth, async (u) => {
-      setUser(u);
-      if (u) {
-        const db = getDb();
-        if (db) {
-          const snap = await getDoc(doc(db, "admins", u.uid));
-          setIsAdmin(snap.exists());
-        }
-      } else {
-        setIsAdmin(false);
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    (async () => {
+      const auth = await getFirebaseAuth();
+      if (!auth) {
+        if (!cancelled) setLoading(false);
+        return;
       }
-      setLoading(false);
-    });
+      const { onAuthStateChanged } = await import("firebase/auth");
+      if (cancelled) return;
+      unsubscribe = onAuthStateChanged(auth, async (u) => {
+        setUser(u);
+        if (u) {
+          const db = getDb();
+          if (db) {
+            const snap = await getDoc(doc(db, "admins", u.uid));
+            setIsAdmin(snap.exists());
+          }
+        } else {
+          setIsAdmin(false);
+        }
+        setLoading(false);
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -60,13 +63,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       configured,
       isAdmin,
       async signIn(email, password) {
-        const auth = getFirebaseAuth();
+        const auth = await getFirebaseAuth();
         if (!auth) throw new Error("Firebase ainda não configurado.");
+        const { signInWithEmailAndPassword } = await import("firebase/auth");
         await signInWithEmailAndPassword(auth, email, password);
       },
       async signUp(name, email, password) {
-        const auth = getFirebaseAuth();
+        const auth = await getFirebaseAuth();
         if (!auth) throw new Error("Firebase ainda não configurado.");
+        const { createUserWithEmailAndPassword, updateProfile } = await import("firebase/auth");
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(cred.user, { displayName: name });
         const db = getDb();
@@ -80,8 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       // Abre o popup do Google para o usuário escolher a conta
       async signInWithGoogle() {
-        const auth = getFirebaseAuth();
+        const auth = await getFirebaseAuth();
         if (!auth) throw new Error("Firebase ainda não configurado.");
+        const { GoogleAuthProvider, signInWithPopup } = await import("firebase/auth");
         const provider = new GoogleAuthProvider();
         const cred = await signInWithPopup(auth, provider);
         // Salva os dados no Firestore igual ao signUp, mas sem precisar de senha
@@ -95,8 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       },
       async logout() {
-        const auth = getFirebaseAuth();
-        if (auth) await signOut(auth);
+        const auth = await getFirebaseAuth();
+        if (!auth) return;
+        const { signOut } = await import("firebase/auth");
+        await signOut(auth);
       },
     }),
     [user, loading, configured, isAdmin],
@@ -105,6 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth deve ser usado dentro de <AuthProvider>");

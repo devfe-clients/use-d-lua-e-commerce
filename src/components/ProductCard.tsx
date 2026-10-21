@@ -15,12 +15,16 @@ export function ProductCard({ product }: { product: Product }) {
       className="group block"
       aria-label={product.name}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
+      <div className="relative aspect-3/4 overflow-hidden bg-secondary">
         <ProductImage
           src={product.images[0]}
           alt={product.name}
+          sizes="(min-width: 1024px) 300px, (min-width: 768px) 33vw, 50vw"
           className="transition-transform duration-700 group-hover:scale-105"
         />
+        src={product.images[0]}
+        alt={product.name}
+        className="transition-transform duration-700 group-hover:scale-105"
         <div className="absolute left-0 top-3 flex flex-col gap-1">
           {hasSale && !soldOut && (
             <span className="bg-ink px-3 py-1 text-[0.6rem] uppercase tracking-[0.18em] text-background">

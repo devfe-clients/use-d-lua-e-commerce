@@ -54,7 +54,10 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ["products"],
+    queryFn: fetchProducts,
+  });
 
   const lancamentos = [...products]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -136,7 +139,11 @@ function Home() {
             <h2 className="mt-2 text-3xl">Lançamentos</h2>
           </div>
         </div>
-        <ProductGrid products={lancamentos} carousel />
+        {isLoading ? (
+          <div className="min-h-80" aria-hidden="true" />
+        ) : (
+          <ProductGrid products={lancamentos} carousel />
+        )}
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
@@ -144,7 +151,11 @@ function Home() {
           <p className="eyebrow">Favoritas das clientes</p>
           <h2 className="mt-2 text-3xl">Mais vendidos</h2>
         </div>
-        <ProductGrid products={maisVendidos} carousel />
+        {isLoading ? (
+          <div className="min-h-80" aria-hidden="true" />
+        ) : (
+          <ProductGrid products={maisVendidos} carousel />
+        )}
       </section>
     </div>
   );
