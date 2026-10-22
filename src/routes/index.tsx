@@ -83,13 +83,13 @@ function Home() {
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-ink/10 px-6 text-center md:block md:px-0">
             <div className="md:absolute md:left-[29.2%] md:top-[12%] md:w-[48%] md:-translate-x-1/2">
-              <p className="eyebrow">Moda Feminina</p>
+              <p className="eyebrow">Moda Íntima Feminina</p>
               <h1 className="mt-4 text-4xl leading-tight md:text-[clamp(1.5rem,4.6vw,5rem)]">
                 Assim Como a Lua <br className="hidden md:block" />
                 somos feitas de Fases
               </h1>
               <p className="mt-4 text-sm text-ink/80 md:text-[clamp(0.875rem,1.25vw,1.25rem)]">
-                Peças escolhidas com cuidado elegância qualidade e delicadeza
+                Elegância e qualidade em cada detalhe
               </p>
             </div>
             <Link
