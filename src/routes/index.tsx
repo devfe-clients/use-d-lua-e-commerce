@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/lib/catalog";
@@ -59,7 +60,16 @@ function Home() {
     queryFn: fetchProducts,
   });
 
-  const lancamentos = [...products]
+  useEffect(() => {
+    if (isLoading || window.location.hash !== "#lancamentos") return;
+    const timer = setTimeout(() => {
+      document.getElementById("lancamentos")?.scrollIntoView({ behavior: "auto", block: "start" });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
+
+  const marcados = products.filter((p) => p.launch);
+  const lancamentos = [...(marcados.length > 0 ? marcados : products)]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 8);
   const maisVendidos = products.filter((p) => p.bestSeller).slice(0, 8);
@@ -132,7 +142,10 @@ function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+      <section
+        id="lancamentos"
+        className="mx-auto max-w-7xl scroll-mt-24 px-4 pb-20 sm:px-6 lg:px-8"
+      >
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="eyebrow">Novidades</p>

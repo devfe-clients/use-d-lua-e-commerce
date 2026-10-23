@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { fetchProduct } from "@/lib/catalog";
 import { ProductImage } from "@/components/ProductImage";
 import { useCart } from "@/lib/cart";
@@ -53,6 +53,7 @@ function ProductPage() {
 
 function ProductDetail({ product }: { product: Product }) {
   const navigate = useNavigate();
+  const router = useRouter();
   const { addItem } = useCart();
   const [size, setSize] = useState(product.sizes[0] ?? "");
   const [color, setColor] = useState(product.colors[0] ?? "");
@@ -88,7 +89,17 @@ function ProductDetail({ product }: { product: Product }) {
   const hasSale = Boolean(product.salePrice && product.salePrice > 0);
   const low = isLowStock(product.stock);
   const soldOut = product.stock <= 0;
+  const showLow = product.lowStockBadge ?? low;
   const gallery = product.images.length > 0 ? product.images : [undefined, undefined, undefined];
+
+  function goBack() {
+    const index = window.history.state?.__TSR_index ?? 0;
+    if (index > 0) {
+      router.history.back();
+    } else {
+      navigate({ to: "/busca", search: { q: "" } });
+    }
+  }
 
   function prevImage() {
     setActiveImage((i) => (i - 1 + gallery.length) % gallery.length);
@@ -127,6 +138,14 @@ function ProductDetail({ product }: { product: Product }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <button
+        type="button"
+        onClick={goBack}
+        aria-label="Voltar"
+        className="mb-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-ink/70 transition hover:bg-background hover:text-ink"
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="lg:sticky lg:top-24 lg:self-start">
           <div className="relative h-[60svh] w-full overflow-hidden lg:h-[calc(100svh-14rem)]">
@@ -200,9 +219,10 @@ function ProductDetail({ product }: { product: Product }) {
             <span className="text-2xl">{formatPrice(price)}</span>
           </div>
 
-          {low && (
+          {showLow && !soldOut && (
             <p className="mt-4 inline-block bg-destructive px-3 py-1.5 text-xs uppercase tracking-[0.16em] text-destructive-foreground">
-              Últimas unidades! Restam {product.stock} de {LOW_STOCK_THRESHOLD}
+              Últimas unidades!
+              {low && ` Restam ${product.stock} de ${LOW_STOCK_THRESHOLD}`}
             </p>
           )}
           {soldOut && (

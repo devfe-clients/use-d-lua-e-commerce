@@ -33,10 +33,7 @@ export async function adminFetchProducts(): Promise<Product[]> {
   if (!db) throw new Error("Firebase não configurado.");
 
   // query() monta a consulta — aqui pedimos todos os produtos ordenados pelo mais novo primeiro
-  const q = query(
-    collection(db, COLLECTIONS.products),
-    orderBy("createdAt", "desc"),
-  );
+  const q = query(collection(db, COLLECTIONS.products), orderBy("createdAt", "desc"));
 
   const snap = await getDocs(q);
 
@@ -53,17 +50,12 @@ export async function adminFetchProducts(): Promise<Product[]> {
  * setDoc com { merge: true } faz um "upsert":
  * cria se não existir, atualiza só os campos enviados se existir.
  */
-export async function adminSaveProduct(
-  id: string,
-  data: Omit<Product, "id">,
-): Promise<void> {
+export async function adminSaveProduct(id: string, data: Omit<Product, "id">): Promise<void> {
   const db = getDb();
   if (!db) throw new Error("Firebase não configurado.");
 
   // doc() sem ID gera um ID automático; com ID aponta para o documento existente
-  const ref = id
-    ? doc(db, COLLECTIONS.products, id)
-    : doc(collection(db, COLLECTIONS.products));
+  const ref = id ? doc(db, COLLECTIONS.products, id) : doc(collection(db, COLLECTIONS.products));
 
   await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
 }
@@ -91,10 +83,7 @@ export async function adminFetchOrders(): Promise<Order[]> {
   const db = getDb();
   if (!db) throw new Error("Firebase não configurado.");
 
-  const q = query(
-    collection(db, COLLECTIONS.orders),
-    orderBy("criadoEm", "desc"),
-  );
+  const q = query(collection(db, COLLECTIONS.orders), orderBy("criadoEm", "desc"));
 
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Order);
@@ -106,10 +95,7 @@ export async function adminFetchOrders(): Promise<Order[]> {
  * updateDoc atualiza só os campos listados — não apaga o resto do documento.
  * Registramos também a data da mudança em `historico` para mostrar no rastreamento.
  */
-export async function adminUpdateOrderStatus(
-  orderId: string,
-  status: OrderStatus,
-): Promise<void> {
+export async function adminUpdateOrderStatus(orderId: string, status: OrderStatus): Promise<void> {
   const db = getDb();
   if (!db) throw new Error("Firebase não configurado.");
 

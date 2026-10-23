@@ -13,12 +13,8 @@
 
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  adminDeleteProduct,
-  adminFetchProducts,
-  adminSaveProduct,
-} from "@/lib/admin";
-import { CATEGORIES, formatPrice, type CategorySlug, type Product } from "@/lib/types";
+import { adminDeleteProduct, adminFetchProducts, adminSaveProduct } from "@/lib/admin";
+import { CATEGORIES, formatPrice, isLowStock, type CategorySlug, type Product } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/produtos")({
   component: AdminProdutos,
@@ -70,13 +66,7 @@ function AdminProdutos() {
 
   // Se `editing` não for null, mostra o formulário
   if (editing !== null) {
-    return (
-      <ProductForm
-        initial={editing}
-        onSave={handleSave}
-        onCancel={() => setEditing(null)}
-      />
-    );
+    return <ProductForm initial={editing} onSave={handleSave} onCancel={() => setEditing(null)} />;
   }
 
   // Caso contrário, mostra a lista
@@ -163,9 +153,7 @@ function ProductForm({
   // Os valores padrão (after ??) são usados quando é um produto novo
   const [name, setName] = useState(initial.name ?? "");
   const [slug, setSlug] = useState(initial.slug ?? "");
-  const [category, setCategory] = useState<CategorySlug>(
-    initial.category ?? "pijamas",
-  );
+  const [category, setCategory] = useState<CategorySlug>(initial.category ?? "pijamas");
   const [description, setDescription] = useState(initial.description ?? "");
 
   // Preços guardados em centavos no Firestore, mas exibidos em reais no formulário
@@ -180,17 +168,18 @@ function ProductForm({
   const [stock, setStock] = useState(String(initial.stock ?? ""));
 
   // Imagens: o usuário cola URLs do Cloudinary separadas por vírgula
-  const [imagesRaw, setImagesRaw] = useState(
-    (initial.images ?? []).join(", "),
-  );
+  const [imagesRaw, setImagesRaw] = useState((initial.images ?? []).join(", "));
 
   // Tamanhos e cores: separados por vírgula também
   const [sizesRaw, setSizesRaw] = useState((initial.sizes ?? []).join(", "));
-  const [colorsRaw, setColorsRaw] = useState(
-    (initial.colors ?? []).join(", "),
-  );
+  const [colorsRaw, setColorsRaw] = useState((initial.colors ?? []).join(", "));
 
   const [bestSeller, setBestSeller] = useState(initial.bestSeller ?? false);
+  const [launch, setLaunch] = useState(initial.launch ?? false);
+  const [lowStockBadge, setLowStockBadge] = useState(
+    initial.lowStockBadge ?? (initial.stock !== undefined && isLowStock(initial.stock)),
+  );
+  const [promoBadge, setPromoBadge] = useState(initial.promoBadge ?? Boolean(initial.salePrice));
   const [saving, setSaving] = useState(false);
 
   /**
@@ -237,15 +226,16 @@ function ProductForm({
         // Math.round evita problemas de ponto flutuante
         // * 100 para guardar em centavos
         price: Math.round(parseFloat(priceDisplay) * 100),
-        salePrice: salePriceDisplay
-          ? Math.round(parseFloat(salePriceDisplay) * 100)
-          : null,
+        salePrice: salePriceDisplay ? Math.round(parseFloat(salePriceDisplay) * 100) : null,
         stock: parseInt(stock, 10),
         images: toArray(imagesRaw),
         sizes: toArray(sizesRaw),
         colors: toArray(colorsRaw),
         variants: initial.variants ?? [],
         bestSeller,
+        launch,
+        lowStockBadge,
+        promoBadge,
         featured: initial.featured ?? false,
         // Se é edição, mantém a data original; se é novo, usa hoje
         createdAt: initial.createdAt ?? new Date().toISOString(),
@@ -266,13 +256,10 @@ function ProductForm({
         >
           ← Voltar
         </button>
-        <h1 className="text-2xl tracking-wide">
-          {initial.id ? "Editar produto" : "Novo produto"}
-        </h1>
+        <h1 className="text-2xl tracking-wide">{initial.id ? "Editar produto" : "Novo produto"}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
-
         {/* Nome + slug lado a lado */}
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Nome">
@@ -415,13 +402,51 @@ function ProductForm({
           </label>
         </div>
 
+        {/* Lançamentos */}
+        <div className="flex items-center gap-3">
+          <input
+            id="launch"
+            type="checkbox"
+            checked={launch}
+            onChange={(e) => setLaunch(e.target.checked)}
+            className="h-4 w-4"
+          />
+          <label htmlFor="launch" className="text-sm">
+            Lançamentos (aparece na seção Lançamentos da home)
+          </label>
+        </div>
+
+        {/* Etiqueta vermelha */}
+        <div className="flex items-center gap-3">
+          <input
+            id="lowStockBadge"
+            type="checkbox"
+            checked={lowStockBadge}
+            onChange={(e) => setLowStockBadge(e.target.checked)}
+            className="h-4 w-4"
+          />
+          <label htmlFor="lowStockBadge" className="text-sm">
+            Últimas unidades (mostra a etiqueta vermelha no produto)
+          </label>
+        </div>
+
+        {/* Etiqueta preta */}
+        <div className="flex items-center gap-3">
+          <input
+            id="promoBadge"
+            type="checkbox"
+            checked={promoBadge}
+            onChange={(e) => setPromoBadge(e.target.checked)}
+            className="h-4 w-4"
+          />
+          <label htmlFor="promoBadge" className="text-sm">
+            Promoção (mostra a etiqueta preta no produto)
+          </label>
+        </div>
+
         {/* Botões de ação */}
         <div className="flex gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={saving}
-            className="btn-gold disabled:opacity-50"
-          >
+          <button type="submit" disabled={saving} className="btn-gold disabled:opacity-50">
             {saving ? "Salvando…" : "Salvar produto"}
           </button>
           <button type="button" onClick={onCancel} className="btn-outline-ink">
@@ -441,18 +466,10 @@ function ProductForm({
  * Field é um wrapper de campo reutilizável:
  * label em cima + o input/select/textarea passado como children embaixo.
  */
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs uppercase tracking-widest text-muted-foreground">
-        {label}
-      </label>
+      <label className="text-xs uppercase tracking-widest text-muted-foreground">{label}</label>
       {children}
     </div>
   );
