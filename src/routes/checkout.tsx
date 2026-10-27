@@ -123,7 +123,14 @@ function CheckoutPage() {
       await decrementStock(items).catch(() => undefined);
       clear();
 
-      // 4. Redireciona para o Mercado Pago
+      // 4. Dispara o email de confirmacao, sem await para nao travar o fluxo
+      fetch("/api/send-order-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: order.id }),
+      }).catch(() => undefined); // erro no email nao quebra o pedido
+
+      // 5. Redireciona para o Mercado Pago
       window.location.href = checkoutUrl;
     } catch (err) {
       setBusy(false);
