@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
-import { getAuth, type Auth } from "firebase/auth";
+import type { Auth } from "firebase/auth";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 /**
@@ -39,9 +39,11 @@ export function getDb(): Firestore | null {
   return a ? getFirestore(a) : null;
 }
 
-export function getFirebaseAuth(): Auth | null {
+export async function getFirebaseAuth(): Promise<Auth | null> {
   const a = getFirebaseApp();
-  return a ? getAuth(a) : null;
+  if (!a) return null;
+  const { getAuth } = await import("firebase/auth");
+  return getAuth(a);
 }
 
 export function getFirebaseStorage(): FirebaseStorage | null {

@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Minus, Plus } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import { fetchProduct } from "@/lib/catalog";
 import { ProductImage } from "@/components/ProductImage";
 import { useCart } from "@/lib/cart";
@@ -53,17 +53,73 @@ function ProductPage() {
 
 function ProductDetail({ product }: { product: Product }) {
   const navigate = useNavigate();
+  const router = useRouter();
   const { addItem } = useCart();
   const [size, setSize] = useState(product.sizes[0] ?? "");
   const [color, setColor] = useState(product.colors[0] ?? "");
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
+  const thumbsRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ active: false, startX: 0, startScroll: 0, moved: false });
+
+  function onThumbsPointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== "mouse" || !thumbsRef.current) return;
+    drag.current = {
+      active: true,
+      startX: e.clientX,
+      startScroll: thumbsRef.current.scrollLeft,
+      moved: false,
+    };
+  }
+
+  function onThumbsPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    const d = drag.current;
+    const el = thumbsRef.current;
+    if (!d.active || !el) return;
+    const dx = e.clientX - d.startX;
+    if (Math.abs(dx) > 5) d.moved = true;
+    el.scrollLeft = d.startScroll - dx;
+  }
+
+  function endThumbsDrag() {
+    drag.current.active = false;
+  }
 
   const price = effectivePrice(product);
   const hasSale = Boolean(product.salePrice && product.salePrice > 0);
   const low = isLowStock(product.stock);
   const soldOut = product.stock <= 0;
+  const showLow = product.lowStockBadge ?? low;
   const gallery = product.images.length > 0 ? product.images : [undefined, undefined, undefined];
+
+  function goBack() {
+    const index = window.history.state?.__TSR_index ?? 0;
+    if (index > 0) {
+      router.history.back();
+    } else {
+      navigate({ to: "/busca", search: { q: "" } });
+    }
+  }
+
+  function prevImage() {
+    setActiveImage((i) => (i - 1 + gallery.length) % gallery.length);
+  }
+
+  function nextImage() {
+    setActiveImage((i) => (i + 1) % gallery.length);
+  }
+
+  useEffect(() => {
+    const box = thumbsRef.current;
+    const thumb = box?.children[activeImage] as HTMLElement | undefined;
+    if (!box || !thumb) return;
+    const left =
+      thumb.getBoundingClientRect().left -
+      box.getBoundingClientRect().left +
+      box.scrollLeft -
+      (box.clientWidth - thumb.clientWidth) / 2;
+    box.scrollTo({ left, behavior: "smooth" });
+  }, [activeImage]);
 
   function add() {
     addItem({
@@ -81,18 +137,66 @@ function ProductDetail({ product }: { product: Product }) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <button
+        type="button"
+        onClick={goBack}
+        aria-label="Voltar"
+        className="mb-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/15 text-ink/70 transition hover:bg-background hover:text-ink"
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
       <div className="grid gap-10 lg:grid-cols-2">
-        <div>
-          <div className="aspect-[3/4] overflow-hidden bg-secondary">
-            <ProductImage src={gallery[activeImage]} alt={product.name} label="Foto do produto" />
+        <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="relative h-[60svh] w-full overflow-hidden lg:h-[calc(100svh-14rem)]">
+            <ProductImage
+              src={gallery[activeImage]}
+              alt={product.name}
+              label="Foto do produto"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-contain!"
+            />
+            {gallery.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={prevImage}
+                  aria-label="Foto anterior"
+                  className="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-ink/15 bg-background/80 text-ink/70 backdrop-blur-sm transition hover:bg-background hover:text-ink"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextImage}
+                  aria-label="Próxima foto"
+                  className="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-ink/15 bg-background/80 text-ink/70 backdrop-blur-sm transition hover:bg-background hover:text-ink"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
           </div>
-          <div className="mt-3 grid grid-cols-4 gap-3">
+          <div
+            ref={thumbsRef}
+            onPointerDown={onThumbsPointerDown}
+            onPointerMove={onThumbsPointerMove}
+            onPointerUp={endThumbsDrag}
+            onPointerLeave={endThumbsDrag}
+            onDragStart={(e) => e.preventDefault()}
+            className="mt-3 flex cursor-grab select-none gap-3 overflow-x-auto scrollbar-none active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+          >
             {gallery.map((img, i) => (
               <button
                 key={i}
-                onClick={() => setActiveImage(i)}
-                className={`aspect-square overflow-hidden border ${
+                onClick={() => {
+                  if (drag.current.moved) {
+                    drag.current.moved = false;
+                    return;
+                  }
+                  setActiveImage(i);
+                }}
+                className={`h-20 w-20 shrink-0 overflow-hidden border ${
                   activeImage === i ? "border-gold" : "border-border"
                 }`}
                 aria-label={`Foto ${i + 1}`}
@@ -102,7 +206,6 @@ function ProductDetail({ product }: { product: Product }) {
             ))}
           </div>
         </div>
-
         <div>
           <p className="eyebrow">{product.category}</p>
           <h1 className="mt-2 text-4xl">{product.name}</h1>
@@ -116,9 +219,10 @@ function ProductDetail({ product }: { product: Product }) {
             <span className="text-2xl">{formatPrice(price)}</span>
           </div>
 
-          {low && (
+          {showLow && !soldOut && (
             <p className="mt-4 inline-block bg-destructive px-3 py-1.5 text-xs uppercase tracking-[0.16em] text-destructive-foreground">
-              Últimas unidades! Restam {product.stock} de {LOW_STOCK_THRESHOLD}
+              Últimas unidades!
+              {low && ` Restam ${product.stock} de ${LOW_STOCK_THRESHOLD}`}
             </p>
           )}
           {soldOut && (

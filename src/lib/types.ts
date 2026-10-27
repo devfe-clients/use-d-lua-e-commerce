@@ -30,6 +30,12 @@ export type Product = {
   stock: number;
   featured?: boolean;
   bestSeller?: boolean;
+  /** Aparece na seção Lançamentos da home. */
+  launch?: boolean;
+  /** Mostra a etiqueta vermelha "Últimas unidades". Se vazio, segue o estoque. */
+  lowStockBadge?: boolean;
+  /** Mostra a etiqueta preta "Promoção". Se vazio, segue o preço promocional. */
+  promoBadge?: boolean;
   /** ISO date — usado na ordenação "mais recentes". */
   createdAt: string;
 };

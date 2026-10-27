@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ProductGrid } from "./ProductGrid";
-import { applyFilters, collectColors, collectSizes, type SortOption } from "@/lib/catalog";
+import { applyFilters, collectSizes, type SortOption } from "@/lib/catalog";
 import { CATEGORIES, type CategorySlug, type Product } from "@/lib/types";
 
 function Chip({
@@ -38,15 +38,13 @@ export function CatalogView({
 }) {
   const [sort, setSort] = useState<SortOption>("recentes");
   const [sizes, setSizes] = useState<string[]>([]);
-  const [colors, setColors] = useState<string[]>([]);
   const [category, setCategory] = useState<CategorySlug | "todas">(lockedCategory ?? "todas");
 
   const allSizes = useMemo(() => collectSizes(products), [products]);
-  const allColors = useMemo(() => collectColors(products), [products]);
 
   const filtered = useMemo(
-    () => applyFilters(products, { search, sizes, colors, sort, category }),
-    [products, search, sizes, colors, sort, category],
+    () => applyFilters(products, { search, sizes, colors: [], sort, category }),
+    [products, search, sizes, sort, category],
   );
 
   const toggle = (list: string[], set: (v: string[]) => void, value: string) =>
@@ -74,15 +72,6 @@ export function CatalogView({
           {allSizes.map((s) => (
             <Chip key={s} active={sizes.includes(s)} onClick={() => toggle(sizes, setSizes, s)}>
               {s}
-            </Chip>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="eyebrow mr-2">Cor</span>
-          {allColors.map((c) => (
-            <Chip key={c} active={colors.includes(c)} onClick={() => toggle(colors, setColors, c)}>
-              {c}
             </Chip>
           ))}
         </div>
