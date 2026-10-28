@@ -18,7 +18,7 @@ export const Route = createFileRoute("/admin/pedidos")({
 });
 
 // Sequência de status — a ordem importa para saber qual é o "próximo"
-const STATUS_FLOW: OrderStatus[] = ["pending", "separacao", "enviado", "entregue"];
+const STATUS_FLOW: OrderStatus[] = ["pending", "pago", "separacao", "enviado", "entregue"];
 
 function AdminPedidos() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -277,9 +277,10 @@ function StatusBadge({ status }: { status: string | undefined }) {
   // Mapa de status → classe de cor de fundo
   const colors: Record<string, string> = {
     pending: "bg-yellow-100 text-yellow-800",
+    pago: "bg-green-100 text-green-800",
     separacao: "bg-blue-100 text-blue-800",
     enviado: "bg-purple-100 text-purple-800",
-    entregue: "bg-green-100 text-green-800",
+    entregue: "bg-emerald-100 text-emerald-800",
     cancelado: "bg-red-100 text-red-800",
   };
 
