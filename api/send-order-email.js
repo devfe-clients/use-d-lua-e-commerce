@@ -10,6 +10,9 @@ if (!getApps().length) {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Com domínio verificado no Resend, defina RESEND_FROM na Vercel, ex.: "Use D'lua <noreply@seudominio.com.br>"
+const EMAIL_FROM = process.env.RESEND_FROM ?? "Use D'lua <onboarding@resend.dev>";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -41,19 +44,17 @@ export default async function handler(req, res) {
               ${item.quantity}x ${item.name} — ${item.size} / ${item.color}
             </td>
             <td style="padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;">
-              R$ ${(item.price * item.quantity / 100).toFixed(2).replace(".", ",")}
+              R$ ${((item.price * item.quantity) / 100).toFixed(2).replace(".", ",")}
             </td>
-          </tr>`
+          </tr>`,
       )
       .join("");
 
     const totalFormatado = `R$ ${(order.total / 100).toFixed(2).replace(".", ",")}`;
 
     // Envia o email
-    await resend.emails.send({
-      // Em producao real com dominio proprio: from: "Use D'lua <noreply@usedlua.com.br>"
-      // Sem dominio verificado, usa o remetente de teste do Resend:
-      from: "Use D'lua <onboarding@resend.dev>",
+    const { error } = await resend.emails.send({
+      from: EMAIL_FROM,
       to: order.usuarioEmail ?? order.enderecoEntrega?.email,
       subject: `Pedido confirmado — #${order.id}`,
       html: `
@@ -95,6 +96,11 @@ export default async function handler(req, res) {
         </div>
       `,
     });
+
+    if (error) {
+      console.error("Resend recusou o envio:", error);
+      return res.status(502).json({ error: "Erro ao enviar email." });
+    }
 
     return res.status(200).json({ sent: true });
   } catch (error) {
