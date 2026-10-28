@@ -3,10 +3,15 @@ import admin from "firebase-admin";
 
 // Inicializa o Firebase Admin so uma vez
 if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+  try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  } catch (e) {
+    console.error("FIREBASE_INIT_ERROR:", e.message);
+    // Não quebra o módulo — o handler vai retornar erro descritivo
+  }
 }
 
 const mpClient = new MercadoPagoConfig({
