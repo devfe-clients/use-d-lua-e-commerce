@@ -93,6 +93,7 @@ function CheckoutPage() {
       // 1. Cria o pedido no Firestore com status pending
       const order = await createOrder({
         usuarioId: user?.uid ?? null,
+        usuarioEmail: user?.email ?? null,
         itens: items,
         subtotal,
         desconto: discount,

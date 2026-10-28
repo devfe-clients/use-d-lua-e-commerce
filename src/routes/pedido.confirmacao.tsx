@@ -27,10 +27,23 @@ function ConfirmationPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!pedido) return;
+
     fetchOrder(pedido)
       .then(setOrder)
       .catch(() => setOrder(null))
       .finally(() => setLoading(false));
+
+    const interval = setInterval(async () => {
+      const data = await fetchOrder(pedido).catch(() => null);
+      if (!data) return;
+      setOrder(data);
+      if (data.status === "pago") {
+        clearInterval(interval);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [pedido]);
   if (loading)
     return <p className="py-32 text-center text-sm text-muted-foreground">Carregando…</p>;

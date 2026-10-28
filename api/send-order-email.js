@@ -1,10 +1,10 @@
 import { Resend } from "resend";
-import admin from "firebase-admin";
+import { initializeApp, getApps, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+if (!getApps().length) {
+  initializeApp({
+    credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
   });
 }
 
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
   try {
     // Busca o pedido no Firestore para ter os dados completos
-    const db = admin.firestore();
+    const db = getFirestore();
     const snap = await db.collection("orders").doc(orderId).get();
 
     if (!snap.exists) {
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
       // Em producao real com dominio proprio: from: "Use D'lua <noreply@usedlua.com.br>"
       // Sem dominio verificado, usa o remetente de teste do Resend:
       from: "Use D'lua <onboarding@resend.dev>",
-      to: order.enderecoEntrega.email ?? order.usuarioEmail,
+      to: order.usuarioEmail ?? order.enderecoEntrega?.email,
       subject: `Pedido confirmado — #${order.id}`,
       html: `
         <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; color: #1a1a1a;">

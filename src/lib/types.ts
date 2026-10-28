@@ -60,7 +60,7 @@ export type Coupon = {
   minSubtotal?: number;
 };
 
-export type OrderStatus = "pending" | "separacao" | "enviado" | "entregue" | "cancelado";
+export type OrderStatus = "pending" | "pago" | "separacao" | "enviado" | "entregue" | "cancelado";
 
 export type PaymentMethod = "cartao" | "pix" | "boleto";
 
@@ -72,6 +72,7 @@ export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "Pedido recebido",
+  pago: "Pagamento confirmado",
   separacao: "Em separação",
   enviado: "Enviado",
   entregue: "Entregue",
@@ -95,6 +96,7 @@ export type ShippingAddress = {
 export type Order = {
   id: string;
   usuarioId: string | null;
+  usuarioEmail?: string | null;
   itens: CartItem[];
   subtotal: number;
   desconto: number;
