@@ -1,5 +1,7 @@
 import { MercadoPagoConfig, Payment } from "mercadopago";
-import admin from "firebase-admin";
+import * as adminModule from "firebase-admin";
+
+const admin = adminModule.default ?? adminModule;
 
 export default async function handler(req, res) {
   if (!admin.apps.length) {
