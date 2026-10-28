@@ -37,31 +37,35 @@ export default async function handler(req, res) {
     const payment = new Payment(mpClient);
     const paymentData = await payment.get({ id: data.id });
 
-    const orderId = paymentData.external_reference;
-    const status = paymentData.status;
+const orderId = paymentData.external_reference;
+const status = paymentData.status;
 
-    // Traduz o status do MP para o status do pedido
-    const statusMap = {
-      approved: "pago",
-      pending: "pending",
-      in_process: "pending",
-      rejected: "cancelado",
-      cancelled: "cancelado",
-      refunded: "cancelado",
-    };
+// Se não tem external_reference, é pagamento de teste ou simulação — ignora
+if (!orderId) {
+  console.log("Webhook recebido sem external_reference, ignorando.");
+  return res.status(200).json({ ignored: "no external_reference" });
+}
 
-    const newStatus = statusMap[status] ?? "pending";
+const statusMap = {
+  approved: "pago",
+  pending: "pending",
+  in_process: "pending",
+  rejected: "cancelado",
+  cancelled: "cancelado",
+  refunded: "cancelado",
+};
 
-    // Atualiza o pedido no Firestore
-    const db = admin.firestore();
-    await db.collection("orders").doc(orderId).update({
-      status: newStatus,
-      mpPaymentId: String(data.id),
-      mpStatus: status,
-      [`historico.${newStatus}`]: new Date().toISOString(),
-    });
+const newStatus = statusMap[status] ?? "pending";
 
-    return res.status(200).json({ received: true });
+const db = admin.firestore();
+await db.collection("orders").doc(orderId).update({
+  status: newStatus,
+  mpPaymentId: String(data.id),
+  mpStatus: status,
+  [`historico.${newStatus}`]: new Date().toISOString(),
+});
+
+return res.status(200).json({ received: true });
 
   } catch (error) {
     console.error("Erro no webhook:", error);
