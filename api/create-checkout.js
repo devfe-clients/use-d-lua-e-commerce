@@ -39,9 +39,9 @@ const items = itens.map((item) => ({
         back_urls: {
           success: `https://use-dlua.vercel.app/pedido/confirmacao?pedido=${orderId}`,
           failure: `https://use-dlua.vercel.app/checkout?erro=pagamento`,
-          pending: `https://use-dlua.vercel.app/pedido/confirmacao?pedido=${orderId}&status=pending`,
+          pending: `https://use-dlua.vercel.app/pedido/confirmacao?pedido=${orderId}`,
         },
-        auto_return: "approved",
+        auto_return: "all",
         statement_descriptor: "USE DLUA",
       },
     });

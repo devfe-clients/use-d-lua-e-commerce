@@ -68,9 +68,15 @@ function ConfirmationPage() {
         <p className="mt-3 text-sm text-muted-foreground">
           Número do pedido: <span className="font-medium text-foreground">{order.id}</span>
         </p>
-        <span className="mt-4 inline-block bg-secondary px-3 py-1 text-xs uppercase tracking-[0.16em]">
-          {STATUS_LABELS[order.status]}
-        </span>
+        {order.status === "pago" ? (
+          <span className="mt-4 inline-block bg-green-100 text-green-800 px-3 py-1 text-xs uppercase tracking-[0.16em]">
+            ✓ Pagamento confirmado
+          </span>
+        ) : (
+          <span className="mt-4 inline-block bg-secondary px-3 py-1 text-xs uppercase tracking-[0.16em]">
+            {STATUS_LABELS[order.status]}
+          </span>
+        )}
       </div>
 
       <div className="mt-10 grid gap-4 text-sm sm:grid-cols-2">
