@@ -1,15 +1,16 @@
 import { MercadoPagoConfig, Payment } from "mercadopago";
-import * as adminModule from "firebase-admin";
-
-const admin = adminModule.default ?? adminModule;
+import { initializeApp, getApps, cert } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
 export default async function handler(req, res) {
-  if (!admin.apps.length) {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+  // Inicializa só se ainda não foi inicializado
+  if (!getApps().length) {
+    initializeApp({
+      credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
     });
   }
+
+  const db = getFirestore();
 
   const mpClient = new MercadoPagoConfig({
     accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
@@ -52,7 +53,6 @@ export default async function handler(req, res) {
 
     const newStatus = statusMap[status] ?? "pending";
 
-    const db = admin.firestore();
     await db.collection("orders").doc(orderId).update({
       status: newStatus,
       mpPaymentId: String(data.id),
