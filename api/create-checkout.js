@@ -35,6 +35,7 @@ const items = itens.map((item) => ({
       body: {
         items,
         external_reference: orderId,
+        notification_url: "https://use-dlua.vercel.app/api/webhook-payment",
         back_urls: {
           success: `https://use-dlua.vercel.app/pedido/confirmacao?pedido=${orderId}`,
           failure: `https://use-dlua.vercel.app/checkout?erro=pagamento`,
