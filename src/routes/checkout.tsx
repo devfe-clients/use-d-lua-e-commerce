@@ -1,12 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ComponentType } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Check, CreditCard, QrCode } from "lucide-react";
+import { Banknote, Check, CreditCard, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
-import { createOrder, decrementStock } from "@/lib/orders";
+import { createOrder, decrementStock, setDeliveryPayment } from "@/lib/orders";
 import { OrderSummary } from "@/components/OrderSummary";
-import { PAYMENT_LABELS, type PaymentMethod, type ShippingAddress } from "@/lib/types";
+import {
+  DELIVERY_PAYMENT_LABELS,
+  PAYMENT_LABELS,
+  formatPrice,
+  type DeliveryPaymentMethod,
+  type Order,
+  type PaymentMethod,
+  type ShippingAddress,
+} from "@/lib/types";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -42,10 +50,138 @@ const FIELDS: {
   { key: "bairro", label: "Bairro" },
 ];
 
-const PAYMENTS: { key: PaymentMethod; icon: typeof CreditCard; hint: string }[] = [
+/** Entregador de moto com bolsa nas costas (mesmo estilo de traço do lucide). */
+function DeliveryRiderIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* rodas */}
+      <circle cx="5" cy="18" r="2.5" />
+      <circle cx="19" cy="18" r="2.5" />
+      {/* moto: quadro, banco, garfo e guidão */}
+      <path d="M5 18h6.5l2.5-4.5h2" />
+      <path d="M6.5 14.5h5" />
+      <path d="M19 18l-3-7h-1.5" />
+      {/* piloto: cabeça, tronco, braço e perna */}
+      <circle cx="11.5" cy="5" r="1.5" />
+      <path d="M8.5 14L11 7.5" />
+      <path d="M11 8.5l3.5 2.5" />
+      <path d="M8.5 14l3 1.5-.5 2.5" />
+      {/* bolsa nas costas */}
+      <rect x="3.5" y="7" width="5" height="5.5" rx="1" />
+    </svg>
+  );
+}
+
+const PAYMENTS: {
+  key: PaymentMethod;
+  icon: ComponentType<{ className?: string }>;
+  hint: string;
+}[] = [
   { key: "cartao", icon: CreditCard, hint: "Em até 6x sem juros" },
   { key: "pix", icon: QrCode, hint: "Aprovação imediata" },
+  { key: "entrega", icon: DeliveryRiderIcon, hint: "Pague quando receber" },
 ];
+
+const DELIVERY_OPTIONS: {
+  key: DeliveryPaymentMethod;
+  icon: ComponentType<{ className?: string }>;
+  hint: string;
+}[] = [
+  { key: "cartao", icon: CreditCard, hint: "Crédito ou débito" },
+  { key: "dinheiro", icon: Banknote, hint: "Pague em espécie" },
+  { key: "pix", icon: QrCode, hint: "Pague na hora" },
+];
+
+/** Tela exibida depois de confirmar um pedido "Pagar na entrega". */
+function DeliveryPaymentScreen({ order }: { order: Order }) {
+  const [choice, setChoice] = useState<DeliveryPaymentMethod | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+
+  async function finish() {
+    if (!choice) return;
+    setBusy(true);
+    try {
+      await setDeliveryPayment(order.id, choice);
+      // Email de confirmacao, sem await para nao travar o fluxo
+      fetch("/api/send-order-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: order.id }),
+      }).catch(() => undefined);
+      setDone(true);
+    } catch {
+      toast.error("Nao foi possivel salvar a forma de pagamento. Tente novamente.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (done && choice) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-28 text-center">
+        <p className="eyebrow">Pedido confirmado</p>
+        <h1 className="mt-2 text-4xl">Recebemos seu pedido!</h1>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Pedido nº {order.id} · Pagamento na entrega: {DELIVERY_PAYMENT_LABELS[choice]} ·{" "}
+          {formatPrice(order.total)}
+        </p>
+        <Link to="/" className="btn-gold mt-8">
+          Voltar para a loja
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
+      <p className="eyebrow">Pedido nº {order.id}</p>
+      <h1 className="mt-2 text-4xl">Como você vai pagar?</h1>
+
+      <div className="mt-10 border border-border bg-card p-6 sm:p-8">
+        <h2 className="text-2xl">Pagamento na entrega</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Total a pagar: {formatPrice(order.total)}
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {DELIVERY_OPTIONS.map(({ key, icon: Icon, hint }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setChoice(key)}
+              className={`flex flex-col items-center gap-3 border p-6 text-center transition ${
+                choice === key ? "border-gold bg-secondary" : "border-border hover:border-gold"
+              }`}
+            >
+              <Icon className="h-7 w-7 text-gold" />
+              <span className="text-sm">{DELIVERY_PAYMENT_LABELS[key]}</span>
+              <span className="text-xs text-muted-foreground">{hint}</span>
+            </button>
+          ))}
+        </div>
+        <div className="mt-8">
+          <button
+            disabled={!choice || busy}
+            onClick={() => void finish()}
+            className="btn-gold w-full sm:w-auto"
+          >
+            {busy ? "Salvando…" : "Finalizar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function CheckoutPage() {
   const { items, subtotal, discount, total, coupon, clear } = useCart();
@@ -63,6 +199,7 @@ function CheckoutPage() {
   });
   const [payment, setPayment] = useState<PaymentMethod | null>(null);
   const [busy, setBusy] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
 
   // Redireciona para o login se o usuário não estiver autenticado.
   // O loading evita redirecionar enquanto o Firebase ainda está verificando a sessão.
@@ -74,6 +211,9 @@ function CheckoutPage() {
 
   // Enquanto o Firebase verifica a sessão, não renderiza nada para evitar flash de conteúdo
   if (loading) return null;
+
+  // Pedido "Pagar na entrega" já criado: mostra a tela de escolha do pagamento
+  if (placedOrder) return <DeliveryPaymentScreen order={placedOrder} />;
 
   if (items.length === 0 && !busy) {
     return (
@@ -102,6 +242,15 @@ function CheckoutPage() {
         enderecoEntrega: addr,
         formaPagamento: payment,
       });
+
+      // Pagar na entrega: nao passa pelo Mercado Pago. Baixa o estoque, limpa a
+      // sacola e abre a tela onde o cliente escolhe como vai pagar ao receber.
+      if (payment === "entrega") {
+        await decrementStock(items).catch(() => undefined);
+        clear();
+        setPlacedOrder(order);
+        return;
+      }
 
       // 2. Chama a Vercel Function para criar a preferencia no Mercado Pago
       const response = await fetch("/api/create-checkout", {
@@ -209,9 +358,6 @@ function CheckoutPage() {
                 </button>
               ))}
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              Pagamento simulado — nenhuma cobrança será feita.
-            </p>
             <div className="mt-8 flex gap-3">
               <button onClick={() => setStep(0)} className="btn-outline-ink">
                 Voltar

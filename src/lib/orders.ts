@@ -6,10 +6,11 @@ import {
   query,
   runTransaction,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { COLLECTIONS, getDb } from "./firebase";
-import type { CartItem, Order } from "./types";
+import type { CartItem, DeliveryPaymentMethod, Order } from "./types";
 
 /**
  * Pedidos e estoque. Com o Firebase configurado grava/lê do Firestore
@@ -51,6 +52,20 @@ export async function createOrder(
     localStorage.setItem(LOCAL_KEY, JSON.stringify([order, ...readLocal()]));
   }
   return order;
+}
+
+/** Salva como o cliente vai pagar ao receber (pedidos "Pagar na entrega"). */
+export async function setDeliveryPayment(
+  orderId: string,
+  method: DeliveryPaymentMethod,
+): Promise<void> {
+  const db = getDb();
+  if (db) {
+    await updateDoc(doc(db, COLLECTIONS.orders, orderId), { pagamentoEntrega: method });
+    return;
+  }
+  const list = readLocal().map((o) => (o.id === orderId ? { ...o, pagamentoEntrega: method } : o));
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
 }
 
 export async function fetchOrder(id: string): Promise<Order | null> {

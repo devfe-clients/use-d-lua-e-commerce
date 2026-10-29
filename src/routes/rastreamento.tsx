@@ -6,7 +6,9 @@ import { fetchOrder, fetchOrdersByUser, formatDateTime } from "@/lib/orders";
 import { formatPrice, STATUS_LABELS, type Order, type OrderStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/rastreamento")({
-  validateSearch: (s: Record<string, unknown>) => ({ pedido: typeof s["pedido"] === "string" ? s["pedido"] : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    pedido: typeof s["pedido"] === "string" ? s["pedido"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Rastrear pedido — Use D'lua" },
@@ -18,7 +20,12 @@ export const Route = createFileRoute("/rastreamento")({
   component: TrackingPage,
 });
 
-const TIMELINE: Exclude<OrderStatus, "cancelado">[] = ["pending", "separacao", "enviado", "entregue"];
+const TIMELINE: Exclude<OrderStatus, "cancelado">[] = [
+  "pending",
+  "separacao",
+  "enviado",
+  "entregue",
+];
 
 function TrackingPage() {
   const { pedido } = Route.useSearch();
@@ -33,13 +40,18 @@ function TrackingPage() {
       setInput(pedido);
       setState("loading");
       fetchOrder(pedido)
-        .then((o) => { setOrder(o); setState(o ? "idle" : "notfound"); })
+        .then((o) => {
+          setOrder(o);
+          setState(o ? "idle" : "notfound");
+        })
         .catch(() => setState("notfound"));
     } else if (!authLoading && user) {
       // Logada sem número: busca automaticamente o pedido mais recente da cliente.
-      fetchOrdersByUser(user.uid).then((list) => {
-        if (list[0]) navigate({ search: { pedido: list[0].id }, replace: true });
-      }).catch(() => undefined);
+      fetchOrdersByUser(user.uid)
+        .then((list) => {
+          if (list[0]) navigate({ search: { pedido: list[0].id }, replace: true });
+        })
+        .catch(() => undefined);
     }
   }, [pedido, user, authLoading, navigate]);
 
@@ -63,16 +75,22 @@ function TrackingPage() {
           placeholder="Número do pedido"
           className="w-full border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-gold"
         />
-        <button type="submit" className="btn-gold px-6">Buscar</button>
+        <button type="submit" className="btn-gold px-6">
+          Buscar
+        </button>
       </form>
 
       {state === "loading" && <p className="mt-10 text-sm text-muted-foreground">Buscando…</p>}
-      {state === "notfound" && <p className="mt-10 text-sm text-destructive">Pedido não encontrado. Confira o número.</p>}
+      {state === "notfound" && (
+        <p className="mt-10 text-sm text-destructive">Pedido não encontrado. Confira o número.</p>
+      )}
 
       {order && state === "idle" && (
         <div className="mt-10 border border-border bg-card p-6 sm:p-8">
           <div className="flex flex-wrap justify-between gap-2 text-sm">
-            <p>Pedido <span className="font-medium">{order.id}</span></p>
+            <p>
+              Pedido <span className="font-medium">{order.id}</span>
+            </p>
             <p className="text-muted-foreground">{formatPrice(order.total)}</p>
           </div>
 
@@ -82,22 +100,31 @@ function TrackingPage() {
             <ol className="mt-8">
               {TIMELINE.map((step, i) => {
                 const done = i <= currentIdx;
-                const date = order.historico?.[step] ?? (step === "pending" ? order.criadoEm : undefined);
+                const date =
+                  order.historico?.[step] ?? (step === "pending" ? order.criadoEm : undefined);
                 return (
                   <li key={step} className="relative flex gap-4 pb-8 last:pb-0">
                     {i < TIMELINE.length - 1 && (
-                      <span className={`absolute left-[13px] top-7 h-full w-px ${i < currentIdx ? "bg-gold" : "bg-border"}`} />
+                      <span
+                        className={`absolute left-3.25 top-7 h-full w-px ${i < currentIdx ? "bg-gold" : "bg-border"}`}
+                      />
                     )}
                     <span
                       className={`relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full border ${
-                        done ? "border-gold bg-gold text-primary-foreground" : "border-border bg-background"
+                        done
+                          ? "border-gold bg-gold text-primary-foreground"
+                          : "border-border bg-background"
                       }`}
                     >
                       {done && <Check className="h-3.5 w-3.5" />}
                     </span>
                     <div>
-                      <p className={`text-sm ${done ? "" : "text-muted-foreground"}`}>{STATUS_LABELS[step]}</p>
-                      {done && date && <p className="mt-1 text-xs text-muted-foreground">{formatDateTime(date)}</p>}
+                      <p className={`text-sm ${done ? "" : "text-muted-foreground"}`}>
+                        {STATUS_LABELS[step]}
+                      </p>
+                      {done && date && (
+                        <p className="mt-1 text-xs text-muted-foreground">{formatDateTime(date)}</p>
+                      )}
                     </div>
                   </li>
                 );

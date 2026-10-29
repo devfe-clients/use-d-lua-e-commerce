@@ -7,6 +7,7 @@ const STORAGE_KEY = "usedlua.cart.v1";
 
 type CartContextValue = {
   items: CartItem[];
+  hydrated: boolean;
   count: number;
   subtotal: number;
   discount: number;
@@ -27,25 +28,29 @@ const keyOf = (i: { productId: string; size: string; color: string }) =>
   `${i.productId}|${i.size}|${i.color}`;
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as CartItem[]) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
 
   useEffect(() => {
     try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setItems(JSON.parse(raw) as CartItem[]);
+    } catch {
+      /* ignora */
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch {
       /* ignora */
     }
-  }, [items]);
+  }, [items, hydrated]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {
@@ -114,6 +119,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value: CartContextValue = {
     items,
+    hydrated,
     count: items.reduce((sum, i) => sum + i.quantity, 0),
     subtotal,
     discount,
@@ -134,6 +140,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCart() {
   const ctx = useContext(CartContext);
   if (!ctx) throw new Error("useCart deve ser usado dentro de <CartProvider>");

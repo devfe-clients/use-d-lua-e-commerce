@@ -62,12 +62,21 @@ export type Coupon = {
 
 export type OrderStatus = "pending" | "pago" | "separacao" | "enviado" | "entregue" | "cancelado";
 
-export type PaymentMethod = "cartao" | "pix" | "boleto";
+export type PaymentMethod = "cartao" | "pix" | "entrega";
+
+/** Como o cliente vai pagar quando escolhe "Pagar na entrega". */
+export type DeliveryPaymentMethod = "cartao" | "dinheiro" | "pix";
 
 export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   cartao: "Cartão de crédito",
   pix: "Pix",
-  boleto: "Boleto bancário",
+  entrega: "Pagar na entrega",
+};
+
+export const DELIVERY_PAYMENT_LABELS: Record<DeliveryPaymentMethod, string> = {
+  cartao: "Cartão de crédito/débito",
+  dinheiro: "Dinheiro",
+  pix: "Pix",
 };
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
@@ -104,6 +113,8 @@ export type Order = {
   cupom?: string | null;
   enderecoEntrega: ShippingAddress;
   formaPagamento: PaymentMethod;
+  /** Só para formaPagamento "entrega": como o cliente paga ao receber. */
+  pagamentoEntrega?: DeliveryPaymentMethod | null;
   status: OrderStatus;
   criadoEm: string;
   /** Datas ISO de cada etapa (preenchidas no Firestore conforme o pedido avança). */

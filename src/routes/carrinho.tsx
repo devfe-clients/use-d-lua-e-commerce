@@ -21,6 +21,7 @@ export const Route = createFileRoute("/carrinho")({
 function CartPage() {
   const {
     items,
+    hydrated,
     subtotal,
     discount,
     total,
@@ -32,6 +33,14 @@ function CartPage() {
     removeCoupon,
   } = useCart();
   const [code, setCode] = useState("");
+
+  if (!hydrated) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-28 text-center">
+        <p className="text-sm text-muted-foreground">Carregando sua sacola...</p>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -162,12 +171,12 @@ function CartPage() {
             </div>
           </dl>
 
-<Link to="/checkout" className="btn-gold mt-6 w-full text-center">
-  Finalizar compra
-</Link>
-          <p className="mt-3 text-center text-xs text-muted-foreground">
-            Frete e pagamento na próxima etapa.
-          </p>
+          <Link to="/busca" search={{ q: "" }} className="btn-outline-ink mt-6 w-full text-center">
+            Adicionar produtos
+          </Link>
+          <Link to="/checkout" className="btn-gold mt-4 w-full text-center">
+            Finalizar compra
+          </Link>
         </aside>
       </div>
     </div>
