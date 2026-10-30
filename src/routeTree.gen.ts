@@ -18,6 +18,7 @@ import { Route as ContaRouteImport } from './routes/conta'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as RastreamentoRouteImport } from './routes/rastreamento'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AdminPedidosRouteImport } from './routes/admin.pedidos'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
@@ -71,6 +72,11 @@ const SobreRoute = SobreRouteImport.update({
   path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SuporteRoute = SuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/rastreamento': typeof RastreamentoRoute
   '/sobre': typeof SobreRoute
+  '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
@@ -135,6 +142,7 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/rastreamento': typeof RastreamentoRoute
   '/sobre': typeof SobreRoute
+  '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
@@ -154,6 +162,7 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/rastreamento': typeof RastreamentoRoute
   '/sobre': typeof SobreRoute
+  '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/rastreamento'
     | '/sobre'
+    | '/suporte'
     | '/termos'
     | '/admin/pedidos'
     | '/admin/produtos'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/rastreamento'
     | '/sobre'
+    | '/suporte'
     | '/termos'
     | '/admin/pedidos'
     | '/admin/produtos'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/rastreamento'
     | '/sobre'
+    | '/suporte'
     | '/termos'
     | '/admin/pedidos'
     | '/admin/produtos'
@@ -229,6 +241,7 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   RastreamentoRoute: typeof RastreamentoRoute
   SobreRoute: typeof SobreRoute
+  SuporteRoute: typeof SuporteRoute
   TermosRoute: typeof TermosRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   ContaPedidosRoute: typeof ContaPedidosRoute
@@ -299,6 +312,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suporte': {
+      id: '/suporte'
+      path: '/suporte'
+      fullPath: '/suporte'
+      preLoaderRoute: typeof SuporteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/termos': {
@@ -375,6 +395,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   RastreamentoRoute: RastreamentoRoute,
   SobreRoute: SobreRoute,
+  SuporteRoute: SuporteRoute,
   TermosRoute: TermosRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   ContaPedidosRoute: ContaPedidosRoute,

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchProducts } from "@/lib/catalog";
 import { CatalogView } from "@/components/CatalogView";
+import { BackButton } from "@/components/BackButton";
 
 type SearchParams = { q: string };
 
@@ -29,7 +30,8 @@ function SearchPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <p className="eyebrow">Barra de pesquisa</p>
+      <BackButton />
+      <p className="eyebrow mt-6">Barra de pesquisa</p>
       <h1 className="mt-2 text-4xl">{q ? `Resultados para “${q}”` : "Todas as peças"}</h1>
 
       <form

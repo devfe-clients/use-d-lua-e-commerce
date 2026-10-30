@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/lib/catalog";
@@ -68,6 +68,61 @@ function Home() {
     return () => clearTimeout(timer);
   }, [isLoading]);
 
+  const catRef = useRef<HTMLDivElement>(null);
+
+  // Carrossel automático das categorias: avança um card por vez e volta ao primeiro no final
+  useEffect(() => {
+    const el = catRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let paused = false;
+    let resumeTimer: ReturnType<typeof setTimeout>;
+
+    const pause = () => {
+      paused = true;
+      clearTimeout(resumeTimer);
+    };
+    const resume = () => {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => {
+        paused = false;
+      }, 2500);
+    };
+
+    const interval = setInterval(() => {
+      if (paused) return;
+      const first = el.firstElementChild as HTMLElement | null;
+      if (!first) return;
+      const step = first.offsetWidth + 20; // 20px = gap-5
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+      if (atEnd) el.scrollTo({ left: 0, behavior: "smooth" });
+      else el.scrollBy({ left: step, behavior: "smooth" });
+    }, 2000);
+
+    el.addEventListener("touchstart", pause, { passive: true });
+    el.addEventListener("pointerdown", pause);
+    el.addEventListener("wheel", pause, { passive: true });
+    el.addEventListener("mouseenter", pause);
+    el.addEventListener("touchend", resume);
+    el.addEventListener("pointerup", resume);
+    el.addEventListener("pointercancel", resume);
+    el.addEventListener("mouseleave", resume);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(resumeTimer);
+      el.removeEventListener("touchstart", pause);
+      el.removeEventListener("pointerdown", pause);
+      el.removeEventListener("wheel", pause);
+      el.removeEventListener("mouseenter", pause);
+      el.removeEventListener("touchend", resume);
+      el.removeEventListener("pointerup", resume);
+      el.removeEventListener("pointercancel", resume);
+      el.removeEventListener("mouseleave", resume);
+    };
+  }, []);
+
   const marcados = products.filter((p) => p.launch);
   const lancamentos = [...(marcados.length > 0 ? marcados : products)]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -118,7 +173,10 @@ function Home() {
           <p className="eyebrow">Categorias em destaque</p>
           <h2 className="mt-2 text-3xl">Escolha o seu estilo</h2>
         </div>
-        <div className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-4 px-4 pb-2 scrollbar-width:none [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:scroll-pl-6 sm:px-6 lg:-mx-8 lg:scroll-pl-8 lg:px-8">
+        <div
+          ref={catRef}
+          className="-mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-4 px-4 pb-2 scrollbar-width:none [&::-webkit-scrollbar]:hidden sm:-mx-6 sm:scroll-pl-6 sm:px-6 lg:-mx-8 lg:scroll-pl-8 lg:px-8"
+        >
           {CATEGORIES.map((c, i) => (
             <Link
               key={c.slug}

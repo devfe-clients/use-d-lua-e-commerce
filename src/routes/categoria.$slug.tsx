@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProductsByCategory } from "@/lib/catalog";
 import { CatalogView } from "@/components/CatalogView";
+import { BackButton } from "@/components/BackButton";
 import { CATEGORIES, type CategorySlug } from "@/lib/types";
 
 export const Route = createFileRoute("/categoria/$slug")({
@@ -34,7 +35,8 @@ function CategoryPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      <p className="eyebrow">Catálogo</p>
+      <BackButton />
+      <p className="eyebrow mt-6">Catálogo</p>
       <h1 className="mt-2 text-4xl">{name}</h1>
       <div className="mt-8">
         {isLoading ? (
