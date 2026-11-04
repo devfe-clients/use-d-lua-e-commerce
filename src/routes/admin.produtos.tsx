@@ -99,7 +99,14 @@ function AdminProdutos() {
             <tbody className="divide-y divide-border">
               {products.map((p) => (
                 <tr key={p.id} className="hover:bg-secondary/40">
-                  <td className="px-4 py-3 font-medium">{p.name}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {p.name}
+                    {p.soldOut && (
+                      <span className="ml-2 rounded bg-secondary px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
+                        Esgotado
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground">{p.category}</td>
                   <td className="px-4 py-3">{formatPrice(p.price)}</td>
                   <td className="px-4 py-3">{p.stock}</td>
@@ -180,6 +187,7 @@ function ProductForm({
     initial.lowStockBadge ?? (initial.stock !== undefined && isLowStock(initial.stock)),
   );
   const [promoBadge, setPromoBadge] = useState(initial.promoBadge ?? Boolean(initial.salePrice));
+  const [soldOut, setSoldOut] = useState(initial.soldOut ?? false);
   const [saving, setSaving] = useState(false);
 
   /**
@@ -236,6 +244,7 @@ function ProductForm({
         launch,
         lowStockBadge,
         promoBadge,
+        soldOut,
         featured: initial.featured ?? false,
         // Se é edição, mantém a data original; se é novo, usa hoje
         createdAt: initial.createdAt ?? new Date().toISOString(),
@@ -441,6 +450,20 @@ function ProductForm({
           />
           <label htmlFor="promoBadge" className="text-sm">
             Promoção (mostra a etiqueta preta no produto)
+          </label>
+        </div>
+
+        {/* Esgotado */}
+        <div className="flex items-center gap-3">
+          <input
+            id="soldOut"
+            type="checkbox"
+            checked={soldOut}
+            onChange={(e) => setSoldOut(e.target.checked)}
+            className="h-4 w-4"
+          />
+          <label htmlFor="soldOut" className="text-sm">
+            Esgotado (esconde o produto da loja, ele continua salvo aqui no painel)
           </label>
         </div>
 

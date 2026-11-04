@@ -18,6 +18,58 @@ const CATEGORY_IMAGES = [
   "https://res.cloudinary.com/cmehevck/image/upload/v1791640868/WhatsApp_Image_2026-10-10_at_10.39..jpg",
   "https://res.cloudinary.com/cmehevck/image/upload/v1791640882/WhatsApp_Image_2026-10-10_at_10.39.1.jpg",
 ];
+
+const svgProps = {
+  viewBox: "0 0 64 48",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2.5,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  "aria-hidden": true,
+} as const;
+
+// Moto esportiva com linhas de velocidade
+function MotoIcon({ className }: { className?: string }) {
+  return (
+    <svg {...svgProps} className={className}>
+      <path d="M2 16h6M1 21h6" />
+      <circle cx="15" cy="36" r="6" />
+      <circle cx="50" cy="36" r="6" />
+      <path d="M8 26l12-2 5-5h11l10 6" />
+      <path d="M20 24l7 12h12l7-11" />
+      <path d="M21 36h6" />
+      <path d="M43 15l7 21" />
+      <path d="M40 14h7" />
+    </svg>
+  );
+}
+
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg {...svgProps} className={className}>
+      <rect x="20" y="22" width="24" height="18" rx="2" />
+      <path d="M26 22v-6a6 6 0 0 1 12 0v6" />
+    </svg>
+  );
+}
+
+function CardIcon({ className }: { className?: string }) {
+  return (
+    <svg {...svgProps} className={className}>
+      <rect x="14" y="12" width="36" height="24" rx="3" />
+      <path d="M14 20h36" />
+      <path d="M20 29h8" />
+    </svg>
+  );
+}
+
+const BENEFITS = [
+  { Icon: MotoIcon, title: "Enviamos para toda ", text: "Baixada Santista" },
+  { Icon: LockIcon, title: "Compre com segurança", text: "Dados Protegidos" },
+  { Icon: CardIcon, title: "Pague como quiser", text: "Pix ou Cartões de crédito" },
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -87,7 +139,7 @@ function Home() {
       clearTimeout(resumeTimer);
       resumeTimer = setTimeout(() => {
         paused = false;
-      }, 2500);
+      }, 2000);
     };
 
     const interval = setInterval(() => {
@@ -98,7 +150,7 @@ function Home() {
       const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
       if (atEnd) el.scrollTo({ left: 0, behavior: "smooth" });
       else el.scrollBy({ left: step, behavior: "smooth" });
-    }, 2000);
+    }, 1500);
 
     el.addEventListener("touchstart", pause, { passive: true });
     el.addEventListener("pointerdown", pause);
@@ -165,6 +217,30 @@ function Home() {
               Ver coleção
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Faixa de benefícios */}
+      <section className="border-b border-ink/10 bg-white">
+        <div className="grid w-full grid-cols-3 divide-x divide-ink/15 px-2 py-4 sm:px-8 md:py-7 lg:px-16">
+          {BENEFITS.map(({ Icon, title, text }) => (
+            <div
+              key={title}
+              className="flex flex-col items-center justify-start gap-2 px-2 text-center md:gap-3 md:px-8"
+            >
+              <Icon className="aspect-4/3 h-7 w-auto text-ink md:h-10" />
+              <div>
+                <p className="text-[10px] font-medium uppercase leading-tight tracking-[0.12em] sm:text-xs md:text-xs lg:text-sm">
+                  {title}
+                </p>
+                {text && (
+                  <p className="mt-1 text-[10px] leading-tight text-ink/70 sm:text-xs md:text-xs lg:text-sm">
+                    {text}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

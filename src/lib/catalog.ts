@@ -11,18 +11,22 @@ import { effectivePrice } from "./types";
  */
 export async function fetchProducts(): Promise<Product[]> {
   const db = getDb();
-  if (!db) return SAMPLE_PRODUCTS;
+  if (!db) return SAMPLE_PRODUCTS.filter((p) => !p.soldOut);
   const snap = await getDocs(collection(db, COLLECTIONS.products));
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Product, "id">) }));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Omit<Product, "id">) }))
+    .filter((p) => !p.soldOut);
 }
 
 export async function fetchProductsByCategory(category: CategorySlug): Promise<Product[]> {
   const db = getDb();
-  if (!db) return SAMPLE_PRODUCTS.filter((p) => p.category === category);
+  if (!db) return SAMPLE_PRODUCTS.filter((p) => p.category === category && !p.soldOut);
   const snap = await getDocs(
     query(collection(db, COLLECTIONS.products), where("category", "==", category)),
   );
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Product, "id">) }));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Omit<Product, "id">) }))
+    .filter((p) => !p.soldOut);
 }
 
 export async function fetchProduct(id: string): Promise<Product | null> {

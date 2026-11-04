@@ -45,7 +45,7 @@ function ProductPage() {
   if (isLoading) {
     return <p className="py-32 text-center text-sm text-muted-foreground">Carregando peça…</p>;
   }
-  if (!product) {
+  if (!product || product.soldOut) {
     return <p className="py-32 text-center text-sm text-muted-foreground">Peça não encontrada.</p>;
   }
   return <ProductDetail product={product} />;

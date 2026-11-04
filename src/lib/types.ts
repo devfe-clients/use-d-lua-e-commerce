@@ -36,6 +36,8 @@ export type Product = {
   lowStockBadge?: boolean;
   /** Mostra a etiqueta preta "Promoção". Se vazio, segue o preço promocional. */
   promoBadge?: boolean;
+  /** Produto esgotado: some da loja, mas continua salvo no painel admin. */
+  soldOut?: boolean;
   /** ISO date — usado na ordenação "mais recentes". */
   createdAt: string;
 };
