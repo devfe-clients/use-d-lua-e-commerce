@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { ProductImage } from "@/components/ProductImage";
@@ -17,6 +17,24 @@ export const Route = createFileRoute("/carrinho")({
   }),
   component: CartPage,
 });
+
+function BackButton() {
+  const router = useRouter();
+  const goBack = () => {
+    if (window.history.length > 1) router.history.back();
+    else router.navigate({ to: "/" });
+  };
+  return (
+    <button
+      type="button"
+      onClick={goBack}
+      aria-label="Voltar"
+      className="mb-8 inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/30 bg-background text-ink transition-colors hover:border-gold hover:text-gold"
+    >
+      <ArrowLeft className="h-4 w-4" />
+    </button>
+  );
+}
 
 function CartPage() {
   const {
@@ -58,6 +76,7 @@ function CartPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <BackButton />
       <p className="eyebrow">Sacola</p>
       <h1 className="mt-2 text-4xl">Carrinho de compras</h1>
 

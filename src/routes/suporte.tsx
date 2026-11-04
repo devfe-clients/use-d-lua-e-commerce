@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
-
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 const WHATSAPP_NUMBER = "5513991419808";
 const WHATSAPP_MESSAGE = "Olá! Preciso de ajuda, gostaria de falar com atendimento";
 const SUPPORT_EMAIL = "use.dlua01@gmail.com";
@@ -38,9 +37,28 @@ export const Route = createFileRoute("/suporte")({
   component: Suporte,
 });
 
+function BackButton() {
+  const router = useRouter();
+  const goBack = () => {
+    if (window.history.length > 1) router.history.back();
+    else router.navigate({ to: "/" });
+  };
+  return (
+    <button
+      type="button"
+      onClick={goBack}
+      aria-label="Voltar"
+      className="mb-8 inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/30 bg-background text-ink transition-colors hover:border-gold hover:text-gold"
+    >
+      <ArrowLeft className="h-4 w-4" />
+    </button>
+  );
+}
+
 function Suporte() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <BackButton />
       <p className="eyebrow">Atendimento</p>
       <h1 className="mt-2 text-4xl">Fale com nossa equipe</h1>
       <p className="mt-4 max-w-xl text-sm text-muted-foreground">

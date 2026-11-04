@@ -12,6 +12,9 @@ const BANNER_DESKTOP =
   "https://res.cloudinary.com/cmehevck/image/upload/v1791418035/WhatsApp_Image_2026-10-07_at_20.04.16.jpg";
 const BANNER_MOBILE =
   "https://res.cloudinary.com/cmehevck/image/upload/v1792512910/WhatsApp_Image_2026-10-20_at_13.13.46.jpg";
+// Banner promocional (10% na primeira compra) — troque pela URL do Cloudinary
+const BANNER_PROMO =
+  "https://res.cloudinary.com/jiy5sao1/image/upload/v1793825422/WhatsApp_Image_2026-11-04_at_17.31.12.jpg";
 
 const CATEGORY_IMAGES = [
   "https://res.cloudinary.com/cmehevck/image/upload/v1792505770/WhatsApp_Image_2026-10-20_at_11.15.10.jpg",
@@ -60,6 +63,25 @@ function CardIcon({ className }: { className?: string }) {
       <rect x="14" y="12" width="36" height="24" rx="3" />
       <path d="M14 20h36" />
       <path d="M20 29h8" />
+    </svg>
+  );
+}
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.6" cy="6.4" r="0.6" fill="currentColor" />
     </svg>
   );
 }
@@ -293,6 +315,19 @@ function Home() {
         )}
       </section>
 
+      {/* Banner promocional de ponta a ponta */}
+      <section className="mb-20 w-full">
+        <img
+          src={cld(BANNER_PROMO, 1600)}
+          alt="Desconto de 10% na primeira compra. Consulte o cupom via WhatsApp"
+          width={1600}
+          height={534}
+          loading="lazy"
+          decoding="async"
+          className="block h-auto w-full md:mx-auto md:max-w-5xl"
+        />
+      </section>
+
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
         <div className="mb-8">
           <p className="eyebrow">Favoritas das clientes</p>
@@ -303,6 +338,25 @@ function Home() {
         ) : (
           <ProductGrid products={maisVendidos} carousel />
         )}
+      </section>
+
+      {/* Botão do Instagram */}
+      <section className="px-4 pb-20">
+        <a
+          href="https://www.instagram.com/use.dlua/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Siga nossa loja no Instagram @use.dlua"
+          className="mx-auto flex w-fit items-center gap-4 text-ink transition-colors duration-300 hover:text-[#b8962e]"
+        >
+          <InstagramIcon className="h-12 w-12 shrink-0 md:h-14 md:w-14" />
+          <span className="flex flex-col text-left leading-tight">
+            <span className="text-[11px] uppercase tracking-wide md:text-sm">
+              Siga nossa loja no Instagram
+            </span>
+            <span className="text-xl font-bold uppercase md:text-3xl">@use.dlua</span>
+          </span>
+        </a>
       </section>
     </div>
   );
