@@ -5,11 +5,13 @@ export function OrderSummary({
   items,
   subtotal,
   discount,
+  shipping,
   total,
 }: {
   items: CartItem[];
   subtotal: number;
   discount: number;
+  shipping?: number;
   total: number;
 }) {
   return (
@@ -41,6 +43,12 @@ export function OrderSummary({
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Desconto</dt>
             <dd>-{formatPrice(discount)}</dd>
+          </div>
+        )}
+        {shipping !== undefined && (
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">Taxa de entrega</dt>
+            <dd>{formatPrice(shipping)}</dd>
           </div>
         )}
         <div className="flex justify-between border-t border-border pt-2 text-base">

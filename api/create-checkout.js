@@ -21,13 +21,22 @@ export default async function handler(req, res) {
 
   try {
     console.log("preco recebido:", itens[0]?.price, typeof itens[0]?.price);
-const items = itens.map((item) => ({
+    const items = itens.map((item) => ({
       id: item.productId,
       title: `${item.name} — ${item.size} / ${item.color}`,
       quantity: item.quantity,
       unit_price: Number((item.price / 100).toFixed(2)),
       currency_id: "BRL",
     }));
+
+    // Taxa de entrega fixa (R$ 8,00), definida no servidor
+    items.push({
+      id: "taxa-entrega",
+      title: "Taxa de entrega",
+      quantity: 1,
+      unit_price: 8,
+      currency_id: "BRL",
+    });
 
     const preference = new Preference(mpClient);
 

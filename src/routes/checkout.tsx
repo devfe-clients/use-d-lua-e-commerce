@@ -9,6 +9,7 @@ import { OrderSummary } from "@/components/OrderSummary";
 import {
   DELIVERY_PAYMENT_LABELS,
   PAYMENT_LABELS,
+  SHIPPING_FEE,
   formatPrice,
   type DeliveryPaymentMethod,
   type Order,
@@ -185,6 +186,7 @@ function DeliveryPaymentScreen({ order }: { order: Order }) {
 
 function CheckoutPage() {
   const { items, subtotal, discount, total, coupon, clear } = useCart();
+  const totalComTaxa = total + SHIPPING_FEE;
   // Pega também o loading para não redirecionar antes do Firebase confirmar a sessão
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -237,7 +239,8 @@ function CheckoutPage() {
         itens: items,
         subtotal,
         desconto: discount,
-        total,
+        taxaEntrega: SHIPPING_FEE,
+        total: totalComTaxa,
         cupom: coupon?.code ?? null,
         enderecoEntrega: addr,
         formaPagamento: payment,
@@ -386,7 +389,13 @@ function CheckoutPage() {
               </div>
             </div>
             <div className="mt-6">
-              <OrderSummary items={items} subtotal={subtotal} discount={discount} total={total} />
+              <OrderSummary
+                items={items}
+                subtotal={subtotal}
+                discount={discount}
+                shipping={SHIPPING_FEE}
+                total={totalComTaxa}
+              />
             </div>
             <div className="mt-8 flex gap-3">
               <button onClick={() => setStep(1)} className="btn-outline-ink" disabled={busy}>

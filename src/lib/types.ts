@@ -8,6 +8,9 @@ export const CATEGORIES: { slug: CategorySlug; name: string }[] = [
 
 export const LOW_STOCK_THRESHOLD = 5;
 
+/** Taxa de entrega fixa, em centavos (R$ 8,00). */
+export const SHIPPING_FEE = 800;
+
 export type ProductVariant = {
   size: string;
   color: string;
@@ -111,6 +114,7 @@ export type Order = {
   itens: CartItem[];
   subtotal: number;
   desconto: number;
+  taxaEntrega?: number;
   total: number;
   cupom?: string | null;
   enderecoEntrega: ShippingAddress;

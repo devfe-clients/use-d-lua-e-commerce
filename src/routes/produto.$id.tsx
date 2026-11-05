@@ -54,7 +54,7 @@ function ProductPage() {
 function ProductDetail({ product }: { product: Product }) {
   const navigate = useNavigate();
   const router = useRouter();
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [size, setSize] = useState(product.sizes[0] ?? "");
   const [color, setColor] = useState(product.colors[0] ?? "");
   const [quantity, setQuantity] = useState(1);
@@ -296,7 +296,10 @@ function ProductDetail({ product }: { product: Product }) {
             </button>
             <button
               onClick={() => {
-                add();
+                const alreadyInCart = items.some(
+                  (i) => i.productId === product.id && i.size === size && i.color === color,
+                );
+                if (!alreadyInCart) add();
                 navigate({ to: "/carrinho" });
               }}
               disabled={soldOut}

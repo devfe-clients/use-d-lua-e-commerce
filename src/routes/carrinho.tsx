@@ -62,14 +62,17 @@ function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-28 text-center">
-        <h1 className="text-3xl">Sua sacola está vazia</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Explore nossas peças e encontre a sua próxima favorita.
-        </p>
-        <Link to="/busca" search={{ q: "" }} className="btn-gold mt-8">
-          Ver catálogo
-        </Link>
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <BackButton />
+        <div className="mx-auto max-w-3xl px-4 py-14 text-center">
+          <h1 className="text-3xl">Sua sacola está vazia</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Explore nossas peças e encontre a sua próxima favorita.
+          </p>
+          <Link to="/busca" search={{ q: "" }} className="btn-gold mt-8">
+            Ver catálogo
+          </Link>
+        </div>
       </div>
     );
   }
