@@ -95,17 +95,17 @@ const BENEFITS = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Use D'lua — Moda feminina moderna e elegante" },
+      { title: "Use D'lua — Moda Intima Feminina" },
       {
         name: "description",
         content:
-          "Blusas, calças e corsets femininos com design minimalista e acabamento impecável. Conheça a Use D'lua.",
+          "Pijamas Calcinhas e Corsets femininos com design minimalista e acabamento impecável. Conheça a Use D'lua.",
       },
-      { property: "og:title", content: "Use D'lua — Moda feminina moderna e elegante" },
+      { property: "og:title", content: "Use D'lua — Moda Intima Feminina" },
       {
         property: "og:description",
         content:
-          "Blusas, calças e corsets femininos com design minimalista e acabamento impecável.",
+          "Pijamas Calcinhas e Corsets femininos com design minimalista e acabamento impecável.",
       },
     ],
     links: [
@@ -227,9 +227,6 @@ function Home() {
                 Assim Como a Lua <br className="hidden md:block" />
                 somos feitas de Fases
               </h1>
-              <p className="mt-4 text-sm text-ink/80 md:text-[clamp(0.875rem,1.25vw,1.25rem)]">
-                Elegância e qualidade em cada detalhe
-              </p>
             </div>
             <Link
               to="/busca"
@@ -243,7 +240,7 @@ function Home() {
       </section>
 
       {/* Faixa de benefícios */}
-      <section className="border-b border-ink/10 bg-white">
+      <section>
         <div className="grid w-full grid-cols-3 divide-x divide-ink/15 px-2 py-4 sm:px-8 md:py-7 lg:px-16">
           {BENEFITS.map(({ Icon, title, text }) => (
             <div

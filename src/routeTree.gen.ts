@@ -22,6 +22,7 @@ import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AdminPedidosRouteImport } from './routes/admin.pedidos'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
+import { Route as AdminUsuariosRouteImport } from './routes/admin.usuarios'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as ContaPedidosRouteImport } from './routes/conta_.pedidos'
 import { Route as PedidoConfirmacaoRouteImport } from './routes/pedido.confirmacao'
@@ -92,6 +93,11 @@ const AdminProdutosRoute = AdminProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminUsuariosRoute = AdminUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => AdminRoute,
+} as any)
 const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   id: '/categoria/$slug',
   path: '/categoria/$slug',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/conta/pedidos': typeof ContaPedidosRoute
   '/pedido/confirmacao': typeof PedidoConfirmacaoRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/conta/pedidos': typeof ContaPedidosRoute
   '/pedido/confirmacao': typeof PedidoConfirmacaoRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/usuarios': typeof AdminUsuariosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/conta_/pedidos': typeof ContaPedidosRoute
   '/pedido/confirmacao': typeof PedidoConfirmacaoRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin/pedidos'
     | '/admin/produtos'
+    | '/admin/usuarios'
     | '/categoria/$slug'
     | '/conta/pedidos'
     | '/pedido/confirmacao'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin/pedidos'
     | '/admin/produtos'
+    | '/admin/usuarios'
     | '/categoria/$slug'
     | '/conta/pedidos'
     | '/pedido/confirmacao'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin/pedidos'
     | '/admin/produtos'
+    | '/admin/usuarios'
     | '/categoria/$slug'
     | '/conta_/pedidos'
     | '/pedido/confirmacao'
@@ -342,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProdutosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/usuarios': {
+      id: '/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AdminUsuariosRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/categoria/$slug': {
       id: '/categoria/$slug'
       path: '/categoria/$slug'
@@ -376,11 +395,13 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminPedidosRoute: typeof AdminPedidosRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
+  AdminUsuariosRoute: typeof AdminUsuariosRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminPedidosRoute: AdminPedidosRoute,
   AdminProdutosRoute: AdminProdutosRoute,
+  AdminUsuariosRoute: AdminUsuariosRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

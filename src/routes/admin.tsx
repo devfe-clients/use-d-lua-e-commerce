@@ -80,6 +80,7 @@ function Sidebar() {
   const links = [
     { to: "/admin/produtos", label: "Produtos" },
     { to: "/admin/pedidos", label: "Pedidos" },
+    { to: "/admin/usuarios", label: "Usuários" },
   ];
 
   return (

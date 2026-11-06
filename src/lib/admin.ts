@@ -105,3 +105,46 @@ export async function adminUpdateOrderStatus(orderId: string, status: OrderStatu
     [`historico.${status}`]: new Date().toISOString(),
   });
 }
+
+// ---------------------------------------------------------------------------
+// USUÁRIOS
+// ---------------------------------------------------------------------------
+
+export type AdminUser = {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string; // data ISO, ou "" se o usuário não tiver o campo
+};
+
+/**
+ * Busca todos os usuários cadastrados (coleção "users"), do mais novo para o mais antigo.
+ * A ordenação é feita aqui no código, assim usuários sem o campo createdAt também aparecem.
+ */
+export async function adminFetchUsers(): Promise<AdminUser[]> {
+  const db = getDb();
+  if (!db) throw new Error("Firebase não configurado.");
+
+  const snap = await getDocs(collection(db, "users"));
+
+  const users = snap.docs.map((d) => {
+    const data = d.data();
+    // createdAt pode ser string ISO (como está no seu banco) ou Timestamp do Firestore
+    const created = data.createdAt;
+    const createdAt =
+      typeof created === "string"
+        ? created
+        : created && typeof created.toDate === "function"
+          ? created.toDate().toISOString()
+          : "";
+
+    return {
+      id: d.id,
+      name: (data.name as string) ?? "",
+      email: (data.email as string) ?? "",
+      createdAt,
+    };
+  });
+
+  return users.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
